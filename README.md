@@ -1,88 +1,80 @@
-# Premium Architecture Studio
+# Architecture website foundation
 
-> Crafting exceptional spaces through innovative design and timeless elegance.
+A deliberately small production foundation for an architecture practice:
 
-## About Us
+- **Next.js** renders the public content preview and hosts Payload.
+- **Payload CMS** supplies `/admin`, users, homepage controls, projects, project templates, and reusable sections.
+- **Neon Postgres** persists CMS data through Payload's Postgres adapter.
+- **Cloudflare R2** stores image uploads when all R2 variables are configured; local development otherwise uses `media/`.
+- **Vercel** deploys the Next.js application unchanged.
 
-We are a premier architectural firm specializing in luxury residential, commercial, and institutional projects. Our team combines cutting-edge design principles with sustainable practices to create spaces that inspire and endure.
+The public routes are intentionally a content preview, not the final art direction. Replace the files in `src/app/(frontend)` with the approved components without changing the CMS model.
 
-## Services
+## Content and access model
 
-### Residential Architecture
-- Custom luxury homes
-- Estate planning and design
-- Historic renovations and restorations
-- Interior architecture and space planning
+- **Homepage global:** draft/publish workflow, editable hero image/copy, one featured project, and an ordered relationship list for the rest of the homepage work.
+- **Projects:** Payload's native draft/publish workflow, generated unique URL slug, cover image, location/year, one of three presentation-template choices, and blocks for a project hero, text/image sections, and galleries.
+- **Media:** required alt text, responsive image sizes, public reads, and authenticated mutations.
+- **Users:** Payload authentication. The one-time first user becomes an administrator; later users default to editor. Only administrators can create/delete users or change roles.
+- **Public APIs:** anonymous project reads are limited to published documents. Authenticated editors can manage content.
 
-### Commercial Projects
-- Office buildings and corporate headquarters
-- Retail and hospitality spaces
-- Mixed-use developments
-- Urban planning consultation
+## Replaceable design foundation
 
-### Specialty Services
-- Sustainable design and LEED certification
-- 3D visualization and virtual reality presentations
-- Building information modeling (BIM)
-- Construction administration
+`src/app/(frontend)/tokens.css` is the only primitive token layer for the temporary public preview. It owns:
 
-## Our Approach
+- body and display font families
+- type scale, weights, line heights, and reading measure
+- colors and focus treatment
+- spacing scale and section rhythm
+- container width, gutter, borders, and touch-target size
 
-**Design Philosophy**: We believe architecture should seamlessly blend form and function, creating spaces that are both beautiful and purposeful.
+Change token values without editing components. When the final fonts are chosen, load them with `next/font` and assign the generated variables to `--font-family-body` and `--font-family-display`. Payload admin styles remain isolated in the `(payload)` route group.
 
-**Sustainability**: Environmental responsibility is at the core of our practice. We integrate green building technologies and sustainable materials in every project.
+## Local setup
 
-**Client Collaboration**: Our process is highly collaborative, ensuring each project reflects the unique vision and needs of our clients.
+1. Install the Node version in `.nvmrc` (Node 24.11.1) and run `npm install`.
+2. Copy `.env.example` to `.env`; set `PAYLOAD_SECRET` and a Neon `DATABASE_URI`.
+3. Create a migration after schema changes: `npm run migrate:create -- initial-schema`.
+4. Apply migrations: `npm run migrate`.
+5. Start the app: `npm run dev`.
+6. Open `http://localhost:3000/admin` and create the first Payload user.
 
-## Featured Projects
+`payload-types.ts` and the admin import map are generated source artifacts and should be committed after model/admin-component changes:
 
-*Coming Soon* - Explore our portfolio of award-winning residential and commercial projects.
-
-## Awards & Recognition
-
-- AIA Design Excellence Award (2023)
-- Sustainable Architecture Leadership Award (2022)
-- Regional Design Innovation Prize (2021)
-
-## Get In Touch
-
-Ready to bring your vision to life? Contact our team to discuss your next project.
-
-**Office**: 123 Design Boulevard, Metropolitan City
-**Phone**: (555) 123-ARCH
-**Email**: hello@premiumarchitecture.com
-**Website**: www.premiumarchitecture.com
-
----
-
-*Building dreams, one project at a time.*
-
-## Technology Stack
-
-This website is built with modern web technologies to provide an exceptional user experience:
-
-- **Frontend**: React.js with TypeScript
-- **Styling**: Tailwind CSS with custom design system
-- **Performance**: Next.js for optimization and SEO
-- **Hosting**: Vercel for fast, global delivery
-- **CMS**: Headless architecture for easy content management
-
-## Development
-
-```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Run tests
-npm test
+```powershell
+npm run generate:types
+npm run generate:importmap
 ```
 
-## License
+## Cloudflare R2
 
-© 2024 Premium Architecture Studio. All rights reserved.
+R2 configuration is all-or-none: set all five `R2_*` values or leave all five empty for local filesystem uploads. Partial configuration fails early instead of silently writing to ephemeral Vercel storage.
+
+The storage plugin uses authenticated direct browser uploads so large source images do not proxy through Vercel functions. Configure the R2 bucket CORS policy to allow `PUT` from local and production site origins. Point `R2_PUBLIC_URL` to the bucket's public custom domain.
+
+## Vercel
+
+Import the repository as a Next.js project. Add `DATABASE_URI`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SERVER_URL`, and all R2 variables. Set `NEXT_PUBLIC_SERVER_URL` to the production domain. Apply migrations explicitly from a trusted environment before deploying code that depends on a new schema.
+
+Local filesystem uploads are only a development fallback; Vercel's filesystem is ephemeral, so production must use R2.
+
+## Intentional version pins
+
+Dependencies use exact versions for reproducible builds. Most direct dependencies are current. Three packages intentionally remain below the registry's latest major:
+
+- **TypeScript 5.9.3:** the installed `@typescript-eslint/parser` supports TypeScript `<6.1`; TypeScript 7 cannot currently run this lint stack.
+- **ESLint 9.39.5:** transitive plugins used by `eslint-config-next` currently declare support through ESLint 9. ESLint 10 installs with peer conflicts.
+- **GraphQL 16.14.2:** `@payloadcms/next` requires GraphQL `^16.8.1`; GraphQL 17 is outside that peer range.
+
+`@types/node` follows the actual Node 24 runtime rather than the newer Node 26 type package.
+
+## Validation
+
+Run before deployment:
+
+```powershell
+npm run generate:types
+npm run generate:importmap
+npm run lint
+npm run build
+```
