@@ -18,7 +18,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     notFound()
   }
 
-  const image = mediaData(project.coverImage)
+  const image = mediaData(project.coverImage, 'wide')
 
   return (
     <main className="site-shell">

@@ -25,7 +25,7 @@ export default async function HomePage() {
   }
 
   const { featuredProject, homepage, projects } = content
-  const heroImage = mediaData(homepage.hero?.image)
+  const heroImage = mediaData(homepage.hero?.image, 'wide')
 
   return (
     <main className="site-shell">
@@ -101,7 +101,7 @@ function ConnectionFailure() {
 }
 
 function ProjectFeature({ project }: { project: ProjectSummary }) {
-  const image = mediaData(project.coverImage)
+  const image = mediaData(project.coverImage, 'card')
 
   return (
     <section className="content-preview featured-project">

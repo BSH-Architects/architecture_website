@@ -31,23 +31,32 @@ if (configuredR2Values > 0 && !hasR2Configuration) {
   )
 }
 
-const storagePlugins = hasR2Configuration
-  ? [
-      s3Storage({
-        clientUploads: {
+// Object keys are intentionally independent from editable project names. This lets the
+// asset library and project URLs evolve without copying blobs or invalidating cache URLs.
+const mediaObjectPrefix = 'architecture-website/v1/media'
+
+const storagePlugins = [
+  s3Storage({
+    // Keep Payload's storage fields (including `prefix`) present during local
+    // development. The schema and generated types are therefore identical to R2.
+    alwaysInsertFields: true,
+    bucket: r2Configuration.bucket ?? 'local-media',
+    clientUploads: hasR2Configuration
+      ? {
           access: ({ req }) => Boolean(req.user),
-        },
-        collections: {
-          media: {
-            prefix: 'media',
-            generateFileURL: ({ filename, prefix }) =>
-              `${r2Configuration.publicURL!.replace(/\/$/, '')}/${[prefix, filename]
-                .filter(Boolean)
-                .join('/')}`,
-          },
-        },
-        bucket: r2Configuration.bucket!,
-        config: {
+        }
+      : false,
+    collections: {
+      media: {
+        prefix: mediaObjectPrefix,
+        generateFileURL: ({ filename, prefix }) =>
+          `${r2Configuration.publicURL!.replace(/\/$/, '')}/${[mediaObjectPrefix, prefix, filename]
+            .filter(Boolean)
+            .join('/')}`,
+      },
+    },
+    config: hasR2Configuration
+      ? {
           credentials: {
             accessKeyId: r2Configuration.accessKeyId!,
             secretAccessKey: r2Configuration.secretAccessKey!,
@@ -55,10 +64,14 @@ const storagePlugins = hasR2Configuration
           endpoint: r2Configuration.endpoint!,
           forcePathStyle: true,
           region: 'auto',
-        },
-      }),
-    ]
-  : []
+        }
+      : {},
+    enabled: hasR2Configuration,
+    // The collection prefix remains stable; a future import can add a safe
+    // document prefix without replacing the application namespace.
+    useCompositePrefixes: true,
+  }),
+]
 
 export default buildConfig({
   admin: {

@@ -157,10 +157,29 @@ export interface User {
 export interface Media {
   id: number;
   /**
+   * Organizes the CMS library. It does not change the immutable R2 object key.
+   */
+  assetGroup: 'website' | 'project' | 'identity' | 'editorial' | 'archive';
+  /**
+   * Optional cross-reference for project-library images; images may be reused.
+   */
+  relatedProjects?: (number | Project)[] | null;
+  /**
    * A concise description for screen readers and image fallbacks.
    */
   alt: string;
   caption?: string | null;
+  /**
+   * Photographer, studio, or rights attribution when needed.
+   */
+  credit?: string | null;
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -393,8 +412,18 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  assetGroup?: T;
+  relatedProjects?: T;
   alt?: T;
   caption?: T;
+  credit?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;

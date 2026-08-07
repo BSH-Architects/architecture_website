@@ -8,6 +8,8 @@ export type ProjectSummary = Pick<
   'coverImage' | 'id' | 'layout' | 'location' | 'slug' | 'title' | 'year'
 >
 
+export type MediaRendition = 'card' | 'wide'
+
 export type MediaReference = Pick<Media, 'alt' | 'height' | 'url' | 'width'>
 
 export type HomepageContent = {
@@ -80,13 +82,19 @@ export async function getPublishedProject(slug: string) {
 
 export function mediaData(
   value: Media | number | string | null | undefined,
+  rendition?: MediaRendition,
 ): MediaReference | null {
-  if (typeof value !== 'object' || !value || typeof value.url !== 'string') return null
+  if (typeof value !== 'object' || !value) return null
+
+  const resized = rendition ? value.sizes?.[rendition] : undefined
+  const url = resized?.url || value.url
+
+  if (typeof url !== 'string') return null
 
   return {
     alt: value.alt,
-    height: value.height,
-    url: value.url,
-    width: value.width,
+    height: resized?.height || value.height,
+    url,
+    width: resized?.width || value.width,
   }
 }

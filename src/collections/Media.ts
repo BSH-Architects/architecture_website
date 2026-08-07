@@ -17,18 +17,60 @@ export const Media: CollectionConfig = {
     update: authenticated,
   },
   admin: {
-    defaultColumns: ['filename', 'alt', 'updatedAt'],
+    defaultColumns: ['filename', 'assetGroup', 'alt', 'updatedAt'],
     useAsTitle: 'filename',
   },
   upload: {
+    focalPoint: true,
     staticDir: path.resolve(dirname, '../../media'),
-    mimeTypes: ['image/*'],
+    // Raster formats only: they are safe to transform and suitable for the public image pipeline.
+    mimeTypes: ['image/avif', 'image/jpeg', 'image/png', 'image/webp'],
     imageSizes: [
-      { name: 'card', width: 900, height: 675, position: 'centre' },
-      { name: 'wide', width: 1800, height: 1200, position: 'centre' },
+      {
+        name: 'card',
+        width: 900,
+        height: 675,
+        position: 'centre',
+        withoutEnlargement: true,
+        formatOptions: { format: 'webp', options: { quality: 82 } },
+      },
+      {
+        name: 'wide',
+        width: 1800,
+        height: 1200,
+        position: 'centre',
+        withoutEnlargement: true,
+        formatOptions: { format: 'webp', options: { quality: 84 } },
+      },
     ],
   },
   fields: [
+    {
+      name: 'assetGroup',
+      type: 'select',
+      required: true,
+      defaultValue: 'website',
+      options: [
+        { label: 'Website', value: 'website' },
+        { label: 'Project', value: 'project' },
+        { label: 'Identity', value: 'identity' },
+        { label: 'Editorial / press', value: 'editorial' },
+        { label: 'Archive', value: 'archive' },
+      ],
+      admin: {
+        description: 'Organizes the CMS library. It does not change the immutable R2 object key.',
+      },
+    },
+    {
+      name: 'relatedProjects',
+      type: 'relationship',
+      relationTo: 'projects',
+      hasMany: true,
+      admin: {
+        condition: (_, siblingData) => siblingData?.assetGroup === 'project',
+        description: 'Optional cross-reference for project-library images; images may be reused.',
+      },
+    },
     {
       name: 'alt',
       type: 'text',
@@ -40,6 +82,19 @@ export const Media: CollectionConfig = {
     {
       name: 'caption',
       type: 'textarea',
+    },
+    {
+      name: 'credit',
+      type: 'text',
+      admin: {
+        description: 'Photographer, studio, or rights attribution when needed.',
+      },
+    },
+    {
+      name: 'tags',
+      type: 'array',
+      labels: { plural: 'Tags', singular: 'Tag' },
+      fields: [{ name: 'tag', type: 'text', required: true }],
     },
   ],
 }
