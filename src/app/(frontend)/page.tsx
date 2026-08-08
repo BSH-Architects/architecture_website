@@ -11,9 +11,11 @@ import { heroPlaceholder, previewHeroImagePath, SITE_DATUM, SITE_NAME } from '@/
 
 import { HeroStudyNav } from './_components/HeroStudyNav'
 import { HeroStudyTwo } from './_components/HeroStudyTwo'
+import { PeopleStudy } from './_components/PeopleStudy'
 import { PositionStudy } from './_components/PositionStudy'
 import { PracticeStudy } from './_components/PracticeStudy'
 import { ProjectFieldStudy } from './_components/ProjectFieldStudy'
+import { ClosingTransition } from './_components/ClosingTransition'
 import { SiteHero } from './_components/SiteHero'
 
 export const dynamic = 'force-dynamic'
@@ -50,7 +52,8 @@ export default async function HomePage({
   const heroTarget = allowPlaceholderContent ? POSITION_ANCHOR : INDEX_ANCHOR
 
   return (
-    <main className="site-shell">
+    <>
+      <main className="site-shell" id="top">
       {allowPlaceholderContent && <HeroStudyNav activeStudy={selectedHero} />}
 
       {selectedHero === '01' ? (
@@ -83,16 +86,17 @@ export default async function HomePage({
 
       {allowPlaceholderContent && <ProjectFieldStudy />}
       {allowPlaceholderContent && <PracticeStudy />}
+      {allowPlaceholderContent && <PeopleStudy />}
 
-      {content ? (
+      {content && (
         <>
           {content.featuredProject && <ProjectFeature project={content.featuredProject} />}
           <ProjectIndex projects={content.projects} />
         </>
-      ) : (
-        <PlaceholderNotice configured={cmsIsConfigured} />
       )}
-    </main>
+      </main>
+      <ClosingTransition siteName={SITE_NAME} />
+    </>
   )
 }
 
@@ -152,26 +156,6 @@ function ProjectFeature({ project }: { project: ProjectSummary }) {
             />
           </div>
         )}
-      </div>
-    </section>
-  )
-}
-
-/** Development-only: explains why the hero is showing placeholder text. */
-function PlaceholderNotice({ configured }: { configured: boolean }) {
-  return (
-    <section className="content-preview setup-state" id="projects">
-      <div className="content-preview__inner">
-        <p className="utility-label">Development preview</p>
-        <h2>The hero above is rendering placeholder copy.</h2>
-        <p className="lede">
-          {configured
-            ? 'The CMS is configured but unreachable. Check DATABASE_URI and run the Payload migration.'
-            : 'Add DATABASE_URI and PAYLOAD_SECRET to .env, then edit the Homepage global at /admin. Drop any photograph at public/preview/hero.jpg to preview the hero with real imagery first.'}
-        </p>
-        <Link className="text-link" href="/admin">
-          Open Payload admin
-        </Link>
       </div>
     </section>
   )

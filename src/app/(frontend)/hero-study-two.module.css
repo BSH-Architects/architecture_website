@@ -3,7 +3,7 @@
   display: grid;
   min-height: 100svh;
   grid-template-rows: auto 1fr auto;
-  padding: var(--space-5) var(--pad) clamp(var(--space-6), 3vh, var(--space-10));
+  padding: var(--space-5) var(--page-grid-pad) clamp(var(--space-6), 3vh, var(--space-10));
   overflow: hidden;
   isolation: isolate;
   background: var(--charcoal);
@@ -15,7 +15,7 @@
   position: absolute;
   z-index: 2;
   inset-block: 0;
-  inset-inline-end: var(--pad);
+  inset-inline-end: var(--page-grid-pad);
   width: var(--border-width);
   background: var(--color-hero-line);
   opacity: 0;
@@ -71,7 +71,7 @@
   position: absolute;
   z-index: 1;
   inset-block: 0;
-  inset-inline: var(--pad);
+  inset-inline: var(--page-grid-pad);
   background-image: repeating-linear-gradient(
     to right,
     var(--color-hero-line) 0 var(--border-width),
@@ -107,7 +107,7 @@
 .nameMask {
   display: grid;
   align-items: center;
-  margin-inline: calc(-1 * var(--pad));
+  margin-inline: calc(-1 * var(--page-grid-pad));
   overflow: hidden;
 }
 
@@ -216,7 +216,7 @@
 
 @media (max-width: 47.5rem) {
   .hero {
-    padding: var(--space-4) var(--pad) max(var(--space-6), env(safe-area-inset-bottom));
+    padding: var(--space-4) var(--page-grid-pad) max(var(--space-6), env(safe-area-inset-bottom));
   }
 
   .topRail { font-size: var(--font-size-datum); }

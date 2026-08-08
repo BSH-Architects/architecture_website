@@ -1,6 +1,6 @@
 .section {
   position: relative;
-  padding-inline: var(--pad);
+  padding-inline: var(--page-grid-pad);
   overflow: hidden;
   isolation: isolate;
   background: var(--paper);
@@ -11,7 +11,7 @@
   position: absolute;
   z-index: 0;
   inset-block: 0;
-  inset-inline: var(--pad);
+  inset-inline: var(--page-grid-pad);
   background-image: repeating-linear-gradient(
     to right,
     var(--color-line-soft) 0 var(--border-width),

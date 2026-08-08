@@ -19,7 +19,7 @@
   column-gap: var(--grid-gap);
   min-height: 100svh;
   padding-block: var(--space-5) var(--space-6);
-  padding-inline: var(--pad);
+  padding-inline: var(--page-grid-pad);
   overflow: hidden;
   isolation: isolate;
   scroll-margin-top: 0;
@@ -93,7 +93,7 @@
   position: absolute;
   z-index: 2;
   inset-block: 0;
-  inset-inline: var(--pad);
+  inset-inline: var(--page-grid-pad);
   background-image: repeating-linear-gradient(
     to right,
     var(--color-hero-line) 0 var(--border-width),
@@ -102,6 +102,15 @@
   mask-image: linear-gradient(97deg, #000 0%, #000 30%, transparent 74%);
   opacity: 0;
   animation: rules-settle 900ms var(--ease-reveal) 380ms forwards;
+}
+
+.rules::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  width: var(--border-width);
+  background: var(--color-hero-line);
 }
 
 /* Rail ------------------------------------------------------------------- */
@@ -185,7 +194,7 @@
 .title {
   max-width: none;
   margin: 0;
-  margin-inline: var(--display-hang) calc(-1 * var(--pad));
+  margin-inline: var(--display-hang) calc(-1 * var(--page-grid-pad));
   color: var(--color-hero-text);
   font-family: var(--font-family-display);
   font-size: var(--font-size-display-hero);

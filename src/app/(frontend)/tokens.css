@@ -66,6 +66,13 @@
   --grid-columns: 12;
   --grid-gap: clamp(0.625rem, 1vw, 1rem);
   --pad: clamp(1.125rem, 2.6vw, 2.875rem);
+  /*
+   * Full page scaffold: fourteen fluid tracks using the same gap as the
+   * section grids. The first and last tracks stay empty, leaving the inner
+   * twelve-column field aligned from the hero through the footer.
+   */
+  --page-grid-pad: max(var(--pad), calc((100vw + var(--grid-gap)) / 14));
+  --page-grid-width: calc(100% - (2 * var(--page-grid-pad)));
 
   /* Spacing --------------------------------------------------------------- */
   --space-1: 0.25rem;
@@ -82,8 +89,8 @@
   --space-section: clamp(4rem, 9vw, 8rem);
 
   /* Layout and interaction ------------------------------------------------ */
-  --container-max: 96rem;
-  --container-gutter: var(--pad);
+  --container-max: 100%;
+  --container-gutter: var(--page-grid-pad);
   --border-width: 1px;
   --focus-width: 2px;
   --focus-offset: 4px;
@@ -99,5 +106,6 @@
     --grid-columns: 6;
     --grid-gap: 0.5625rem;
     --pad: 1.125rem;
+    --page-grid-pad: max(var(--pad), calc((100vw + var(--grid-gap)) / 8));
   }
 }

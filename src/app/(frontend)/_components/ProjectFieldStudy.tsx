@@ -70,7 +70,7 @@ export function ProjectFieldStudy() {
           <Image
             alt={signatureProject.alt}
             fill
-            sizes="calc(100vw - (2 * var(--pad)))"
+            sizes="(max-width: 760px) calc(100vw - 3rem), 86vw"
             src={signatureProject.image}
             unoptimized
           />
@@ -111,8 +111,8 @@ export function ProjectFieldStudy() {
                   fill
                   sizes={
                     project.layout.startsWith('large')
-                      ? '(max-width: 760px) 100vw, 58vw'
-                      : '(max-width: 760px) 100vw, 34vw'
+                      ? '(max-width: 760px) calc(100vw - 3rem), 50vw'
+                      : '(max-width: 760px) calc(100vw - 3rem), 29vw'
                   }
                   src={project.image}
                   unoptimized
