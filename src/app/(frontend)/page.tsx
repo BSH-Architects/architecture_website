@@ -7,96 +7,121 @@ import {
   mediaData,
   type ProjectSummary,
 } from '@/lib/cms'
+import { heroPlaceholder, previewHeroImagePath, SITE_DATUM, SITE_NAME } from '@/lib/site'
+
+import { HeroStudyNav } from './_components/HeroStudyNav'
+import { HeroStudyTwo } from './_components/HeroStudyTwo'
+import { PositionStudy } from './_components/PositionStudy'
+import { PracticeStudy } from './_components/PracticeStudy'
+import { ProjectFieldStudy } from './_components/ProjectFieldStudy'
+import { SiteHero } from './_components/SiteHero'
 
 export const dynamic = 'force-dynamic'
 
-export default async function HomePage() {
-  if (!cmsIsConfigured) {
-    return <SetupState />
+const INDEX_ANCHOR = '#projects'
+const POSITION_ANCHOR = '#position-study'
+
+/** Placeholder hero copy is a development affordance, never a production fallback. */
+const allowPlaceholderContent = process.env.NODE_ENV !== 'production'
+
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ hero?: string }>
+}) {
+  const requestedHero = (await searchParams).hero
+  const selectedHero = allowPlaceholderContent ? (requestedHero === '01' ? '01' : '02') : '01'
+  const content = cmsIsConfigured
+    ? await getHomepageContent().catch((error: unknown) => {
+        console.error('Unable to load homepage content.', error)
+        return null
+      })
+    : null
+
+  if (!content && !allowPlaceholderContent) {
+    return <UnavailableState configured={cmsIsConfigured} />
   }
 
-  const content = await getHomepageContent().catch((error: unknown) => {
-    console.error('Unable to load homepage content.', error)
-    return null
-  })
-
-  if (!content) {
-    return <ConnectionFailure />
-  }
-
-  const { featuredProject, homepage, projects } = content
-  const heroImage = mediaData(homepage.hero?.image, 'wide')
+  const hero = content?.homepage.hero
+  const heroImage = mediaData(hero?.image, 'wide')
+  const previewImageSrc = content ? null : previewHeroImagePath()
+  const heroSummary = hero?.summary || heroPlaceholder.summary
+  const heroTitle = hero?.title || heroPlaceholder.title
+  const heroTarget = allowPlaceholderContent ? POSITION_ANCHOR : INDEX_ANCHOR
 
   return (
     <main className="site-shell">
-      <section className="content-preview hero-preview">
-        {heroImage?.url && (
-          <Image
-            alt={heroImage.alt || ''}
-            className="hero-preview__image"
-            fill
-            priority
-            sizes="100vw"
-            src={heroImage.url}
-            unoptimized
-          />
-        )}
-        <div className="hero-preview__scrim" />
-        <div className="content-preview__inner hero-preview__content">
-          <p className="utility-label">{homepage.hero?.eyebrow || 'CMS content preview'}</p>
-          <h1>{homepage.hero?.title || 'Your studio’s work, managed in one place.'}</h1>
-          {homepage.hero?.summary && <p className="lede">{homepage.hero.summary}</p>}
-          <Link className="text-link" href="#projects">
-            Browse published projects
-          </Link>
-        </div>
-      </section>
+      {allowPlaceholderContent && <HeroStudyNav activeStudy={selectedHero} />}
 
-      {featuredProject && <ProjectFeature project={featuredProject} />}
+      {selectedHero === '01' ? (
+        <SiteHero
+          brand={SITE_NAME}
+          eyebrow={hero?.eyebrow || heroPlaceholder.eyebrow}
+          image={heroImage}
+          indexHref={heroTarget}
+          practice={SITE_DATUM}
+          previewImageSrc={previewImageSrc}
+          projectCount={content ? content.projects.length : null}
+          sectionID="hero-study-01"
+          summary={heroSummary}
+          title={heroTitle}
+        />
+      ) : (
+        <HeroStudyTwo
+          brand={SITE_NAME}
+          eyebrow={hero?.eyebrow || heroPlaceholder.eyebrow}
+          image={heroImage}
+          indexHref={heroTarget}
+          previewImageSrc={previewImageSrc}
+          summary={heroSummary}
+        />
+      )}
 
-      <section className="content-preview project-index" id="projects">
-        <div className="content-preview__inner">
-          <p className="utility-label">Published work</p>
-          {projects.length > 0 ? (
-            <ul className="project-list">
-              {projects.map((project) => (
-                <li key={project.id}>
-                  <Link href={`/projects/${project.slug}`}>
-                    <span>{project.title}</span>
-                    <span>
-                      {[project.location, project.year].filter(Boolean).join(' · ') ||
-                        'View project'}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="empty-copy">
-              Publish a project in <Link href="/admin">Payload</Link>, then select and order it in the Homepage
-              global.
-            </p>
-          )}
-        </div>
-      </section>
+      {allowPlaceholderContent && (
+        <PositionStudy image={heroImage} previewImageSrc={previewImageSrc} />
+      )}
+
+      {allowPlaceholderContent && <ProjectFieldStudy />}
+      {allowPlaceholderContent && <PracticeStudy />}
+
+      {content ? (
+        <>
+          {content.featuredProject && <ProjectFeature project={content.featuredProject} />}
+          <ProjectIndex projects={content.projects} />
+        </>
+      ) : (
+        <PlaceholderNotice configured={cmsIsConfigured} />
+      )}
     </main>
   )
 }
 
-function ConnectionFailure() {
+function ProjectIndex({ projects }: { projects: ProjectSummary[] }) {
   return (
-    <main className="site-shell">
-      <section className="content-preview setup-state">
-        <div className="content-preview__inner">
-          <p className="utility-label">Content connection unavailable</p>
-          <h1>Check the Neon database connection and run the Payload migration.</h1>
-          <p className="lede">
-            The application is ready; it needs the environment variables in .env.example and an initialized
-            database before it can load studio content.
+    <section className="content-preview project-index" id="projects">
+      <div className="content-preview__inner">
+        <p className="utility-label">Published work</p>
+        {projects.length > 0 ? (
+          <ul className="project-list">
+            {projects.map((project) => (
+              <li key={project.id}>
+                <Link href={`/projects/${project.slug}`}>
+                  <span>{project.title}</span>
+                  <span>
+                    {[project.location, project.year].filter(Boolean).join(' · ') || 'View project'}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="empty-copy">
+            Publish a project in <Link href="/admin">Payload</Link>, then select and order it in the
+            Homepage global.
           </p>
-        </div>
-      </section>
-    </main>
+        )}
+      </div>
+    </section>
   )
 }
 
@@ -132,16 +157,43 @@ function ProjectFeature({ project }: { project: ProjectSummary }) {
   )
 }
 
-function SetupState() {
+/** Development-only: explains why the hero is showing placeholder text. */
+function PlaceholderNotice({ configured }: { configured: boolean }) {
+  return (
+    <section className="content-preview setup-state" id="projects">
+      <div className="content-preview__inner">
+        <p className="utility-label">Development preview</p>
+        <h2>The hero above is rendering placeholder copy.</h2>
+        <p className="lede">
+          {configured
+            ? 'The CMS is configured but unreachable. Check DATABASE_URI and run the Payload migration.'
+            : 'Add DATABASE_URI and PAYLOAD_SECRET to .env, then edit the Homepage global at /admin. Drop any photograph at public/preview/hero.jpg to preview the hero with real imagery first.'}
+        </p>
+        <Link className="text-link" href="/admin">
+          Open Payload admin
+        </Link>
+      </div>
+    </section>
+  )
+}
+
+/** Production: never invents content. */
+function UnavailableState({ configured }: { configured: boolean }) {
   return (
     <main className="site-shell">
       <section className="content-preview setup-state">
         <div className="content-preview__inner">
-          <p className="utility-label">Architecture website foundation</p>
-          <h1>The public experience will appear here once the CMS is connected.</h1>
+          <p className="utility-label">
+            {configured ? 'Content connection unavailable' : 'Architecture website foundation'}
+          </p>
+          <h1>
+            {configured
+              ? 'Check the Neon database connection and run the Payload migration.'
+              : 'The public experience will appear here once the CMS is connected.'}
+          </h1>
           <p className="lede">
-            Add DATABASE_URI and PAYLOAD_SECRET to .env, start the app, then create the first administrator at
-            <Link href="/admin"> /admin</Link>.
+            The application is ready; it needs the environment variables in .env.example and an
+            initialized database before it can load studio content.
           </p>
         </div>
       </section>

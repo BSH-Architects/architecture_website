@@ -1,0 +1,117 @@
+.section {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+  column-gap: var(--grid-gap);
+  padding: clamp(8.25rem, 11.5vw, 11.25rem) var(--pad);
+  background: var(--charcoal);
+  color: var(--paper);
+}
+
+.media {
+  grid-column: 1 / 5;
+  align-self: start;
+  min-width: 0;
+  margin: 0;
+}
+
+.mediaWindow {
+  position: relative;
+  height: clamp(28rem, 31.5vw, 38rem);
+  overflow: hidden;
+  background: var(--graphite);
+}
+
+.mediaWindow img {
+  object-fit: cover;
+  filter: saturate(0.62) contrast(1.03);
+}
+
+.mediaUnset {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(118deg, transparent 0 28%, rgb(246 244 238 / 7%) 28.2% 29%, transparent 29.2%),
+    linear-gradient(155deg, var(--graphite), var(--charcoal));
+}
+
+.copy {
+  grid-column: 7 / -1;
+  display: flex;
+  height: clamp(28rem, 31.5vw, 38rem);
+  min-width: 0;
+  margin-inline-start: clamp(2rem, 3.2vw, 4rem);
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.copy h2 {
+  max-width: 30ch;
+  margin: 0;
+  font-family: var(--font-family-mono);
+  font-size: clamp(2rem, 2.3vw, 2.75rem);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.04;
+  letter-spacing: -0.04em;
+  text-align: left;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.description {
+  display: grid;
+  width: min(100%, 49rem);
+  gap: var(--space-5);
+  color: #b8b5ad;
+  font-family: var(--font-family-mono);
+  font-size: clamp(0.9375rem, 0.2vw + 0.9rem, 1.0625rem);
+  line-height: 1.48;
+  text-align: left;
+}
+
+.description p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+@media (max-width: 60rem) {
+  .media { grid-column: 1 / 5; }
+
+  .copy {
+    grid-column: 6 / -1;
+    margin-inline-start: var(--space-4);
+  }
+
+  .copy h2 {
+    font-size: clamp(1.875rem, 3.4vw, 2.5rem);
+  }
+}
+
+@media (max-width: 47.5rem) {
+  .section {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    row-gap: var(--space-12);
+    padding: 7rem var(--pad);
+  }
+
+  .media {
+    grid-column: 1 / -1;
+  }
+
+  .mediaWindow {
+    height: clamp(22rem, 80vw, 32rem);
+  }
+
+  .copy {
+    grid-column: 1 / -1;
+    height: auto;
+    margin-inline-start: 0;
+    gap: var(--space-16);
+  }
+
+  .copy h2 {
+    max-width: 24ch;
+    font-size: clamp(2rem, 8.5vw, 3rem);
+  }
+
+  .description { width: 100%; }
+}

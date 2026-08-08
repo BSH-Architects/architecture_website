@@ -1,0 +1,207 @@
+.section {
+  position: relative;
+  min-height: 86svh;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--charcoal);
+  color: var(--white);
+}
+
+.media,
+.grade {
+  position: absolute;
+  inset: 0;
+}
+
+.media {
+  z-index: 0;
+}
+
+.media img {
+  object-fit: cover;
+  filter: brightness(0.58) saturate(0.62) contrast(1.03);
+  transform: scale(1.012);
+}
+
+.grade {
+  z-index: 1;
+  background:
+    linear-gradient(to right, rgb(17 18 17 / 76%), rgb(17 18 17 / 16%) 50%, rgb(17 18 17 / 38%)),
+    linear-gradient(to top, rgb(17 18 17 / 44%), transparent 52%);
+}
+
+.grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  min-height: 86svh;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gap);
+  align-content: center;
+  align-items: start;
+  padding: clamp(6rem, 8vw, 9rem) var(--pad);
+}
+
+.heading {
+  grid-column: 1 / 6;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-family-mono);
+  font-size: clamp(2.75rem, 4.25vw, 4.5rem);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.03;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+.title span {
+  display: block;
+  white-space: nowrap;
+}
+
+.heading > p {
+  max-width: 40ch;
+  margin: var(--space-6) 0 0;
+  color: #d1cec6;
+  font-family: var(--font-family-mono);
+  font-size: clamp(0.9375rem, 0.2vw + 0.9rem, 1.0625rem);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.disciplines {
+  grid-column: 7 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--grid-gap);
+}
+
+.discipline {
+  display: grid;
+  min-height: clamp(13rem, 16vw, 16rem);
+  grid-template-columns: auto minmax(0, 1fr);
+  align-content: center;
+  column-gap: var(--space-3);
+  padding: clamp(var(--space-5), 2vw, var(--space-8));
+  border: var(--border-width) solid rgb(246 244 238 / 22%);
+  background: rgb(20 21 18 / 54%);
+  box-shadow: 0 1.25rem 3.75rem rgb(0 0 0 / 20%);
+  backdrop-filter: blur(18px) saturate(0.78);
+  -webkit-backdrop-filter: blur(18px) saturate(0.78);
+}
+
+.index {
+  grid-column: 1;
+  grid-row: 1;
+  padding-top: 0.2em;
+  color: #aaa79f;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-datum);
+  letter-spacing: var(--letter-spacing-label);
+}
+
+.discipline h3 {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-family-mono);
+  font-size: clamp(1rem, 0.55vw + 0.88rem, 1.25rem);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.15;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+}
+
+.discipline p {
+  grid-column: 2;
+  grid-row: 2;
+  max-width: 34ch;
+  margin: 0;
+  color: #d7d4cc;
+  font-family: var(--font-family-body);
+  font-size: clamp(0.9375rem, 0.2vw + 0.9rem, 1.0625rem);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+@media (max-width: 60rem) {
+  .heading {
+    grid-column: 1 / 6;
+  }
+
+  .title {
+    font-size: clamp(2.5rem, 5vw, 3.75rem);
+  }
+
+  .disciplines {
+    grid-column: 6 / -1;
+  }
+
+  .discipline {
+    min-height: 14rem;
+    grid-template-columns: 1fr;
+  }
+
+  .index,
+  .discipline h3,
+  .discipline p {
+    grid-column: 1;
+  }
+
+  .index { margin-bottom: var(--space-2); }
+  .discipline h3 { grid-row: 2; }
+  .discipline p { grid-row: 3; }
+}
+
+@media (max-width: 47.5rem) {
+  .section,
+  .grid {
+    min-height: auto;
+  }
+
+  .grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    row-gap: var(--space-20);
+    padding: var(--space-20) var(--pad);
+  }
+
+  .heading {
+    grid-column: 1 / -1;
+  }
+
+  .title {
+    font-size: clamp(2.25rem, 10.5vw, 4rem);
+  }
+
+  .heading > p {
+    max-width: 34ch;
+  }
+
+  .disciplines {
+    grid-column: 1 / -1;
+    grid-template-columns: 1fr;
+  }
+
+  .discipline {
+    min-height: 13rem;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .index {
+    grid-column: 1;
+    grid-row: 1;
+    margin-bottom: 0;
+  }
+
+  .discipline h3 {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .discipline p {
+    grid-column: 2;
+    grid-row: 2;
+  }
+}

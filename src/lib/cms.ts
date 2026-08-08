@@ -10,7 +10,7 @@ export type ProjectSummary = Pick<
 
 export type MediaRendition = 'card' | 'wide'
 
-export type MediaReference = Pick<Media, 'alt' | 'height' | 'url' | 'width'>
+export type MediaReference = Pick<Media, 'alt' | 'focalX' | 'focalY' | 'height' | 'url' | 'width'>
 
 export type HomepageContent = {
   featuredProject: ProjectSummary | null
@@ -93,6 +93,8 @@ export function mediaData(
 
   return {
     alt: value.alt,
+    focalX: value.focalX,
+    focalY: value.focalY,
     height: resized?.height || value.height,
     url,
     width: resized?.width || value.width,
