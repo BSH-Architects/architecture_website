@@ -59,6 +59,7 @@
 
 .featureMedia {
   position: relative;
+  display: block;
   height: min(76vw, 56.25rem);
   min-height: 33.75rem;
   overflow: hidden;
@@ -90,6 +91,11 @@
   font-weight: var(--font-weight-regular);
   line-height: 0.9;
   letter-spacing: -0.04em;
+}
+
+.featureTitleLink {
+  color: inherit;
+  text-decoration: none;
 }
 
 .projectMeta {

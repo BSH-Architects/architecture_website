@@ -10,3 +10,5 @@ public/preview/*
 !public/preview/README.txt
 *.tsbuildinfo
 .DS_Store
+
+.restore-cache/

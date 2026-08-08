@@ -11,7 +11,7 @@ const FOOTER_START_OFFSET = 0.48
 
 const DEFAULT_IMAGE = {
   alt: 'Bright contemporary residence framed by white concrete and open sky',
-  src: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=90',
+  src: '/api/media/file/residence-landscape-closing.jpg',
 }
 const DEFAULT_HEADING_LINES = ['Made to hold the', 'life that follows.']
 const DEFAULT_LABEL = 'Architecture / Interiors / Landscape'

@@ -44,7 +44,11 @@ export function ProjectFieldStudy({
             </span>
           </header>
 
-          <div className={styles.featureMedia}>
+          <Link
+            aria-label={`Open ${featuredProject.title} project details`}
+            className={styles.featureMedia}
+            href={`/projects/${featuredProject.slug}`}
+          >
             {featureImage?.url && (
               <Image
                 alt={featureImage.alt || ''}
@@ -57,10 +61,17 @@ export function ProjectFieldStudy({
                 unoptimized
               />
             )}
-          </div>
+          </Link>
 
           <div className={styles.featureCaption}>
-            <h2>{featuredProject.title}</h2>
+            <h2>
+              <Link
+                className={styles.featureTitleLink}
+                href={`/projects/${featuredProject.slug}`}
+              >
+                {featuredProject.title}
+              </Link>
+            </h2>
 
             <div className={styles.projectMeta}>
               <strong>{featuredProject.location}</strong>

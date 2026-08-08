@@ -12,7 +12,6 @@ import { SiteNavigation } from './_components/SiteNavigation'
 export const dynamic = 'force-dynamic'
 
 const POSITION_ANCHOR = '#position-study'
-const PROJECTS_ANCHOR = '#project-field-study'
 
 /** Placeholder content is a local design affordance, never a production fallback. */
 const allowPlaceholderContent = process.env.NODE_ENV !== 'production'
@@ -33,7 +32,7 @@ export default async function HomePage() {
   const heroImage = mediaData(hero?.image, 'wide')
   const previewImageSrc = content ? null : previewHeroImagePath()
   const heroSummary = hero?.summary || heroPlaceholder.summary
-  const heroTarget = content ? PROJECTS_ANCHOR : POSITION_ANCHOR
+  const heroTarget = POSITION_ANCHOR
 
   return (
     <>
@@ -49,9 +48,7 @@ export default async function HomePage() {
           summary={heroSummary}
         />
 
-        {allowPlaceholderContent && !content && (
-          <PositionStudy image={heroImage} previewImageSrc={previewImageSrc} />
-        )}
+        <PositionStudy image={heroImage} previewImageSrc={previewImageSrc} />
 
         {content && (
           <ProjectFieldStudy
@@ -60,8 +57,8 @@ export default async function HomePage() {
           />
         )}
 
-        {allowPlaceholderContent && !content && <PracticeStudy />}
-        {allowPlaceholderContent && !content && <PeopleStudy />}
+        <PracticeStudy />
+        <PeopleStudy />
       </main>
       <ClosingTransition siteName={SITE_NAME} />
     </>

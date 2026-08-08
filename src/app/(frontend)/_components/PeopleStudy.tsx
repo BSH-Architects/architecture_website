@@ -6,16 +6,14 @@ const founders = [
   {
     name: 'Person one',
     detail: 'Architecture / Design direction',
-    image:
-      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1600&q=88',
+    image: '/api/media/file/studio-person-one.jpg',
     alt: 'Temporary editorial portrait for the first founder',
     className: styles.first,
   },
   {
     name: 'Person two',
     detail: 'Architecture / Practice direction',
-    image:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1600&q=88',
+    image: '/api/media/file/studio-person-two.jpg',
     alt: 'Temporary editorial portrait for the second founder',
     className: styles.second,
   },

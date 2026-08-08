@@ -41,7 +41,7 @@ export function PracticeStudy() {
           alt=""
           fill
           sizes="100vw"
-          src="https://cdn.prod.website-files.com/69e60b77c36e562efcf3a092/6a0209b5b80c1f21303cae07_model-section.webp"
+          src="/api/media/file/practice-model.webp"
           unoptimized
         />
       </div>
