@@ -9,8 +9,14 @@ import styles from '../closing-transition.module.css'
 
 const FOOTER_START_OFFSET = 0.48
 
-export function ClosingTransition({ siteName }: { siteName: string }) {
+type ClosingTransitionProps = {
+  siteName: string
+  variant?: 'image' | 'project'
+}
+
+export function ClosingTransition({ siteName, variant = 'image' }: ClosingTransitionProps) {
   const transitionRef = useRef<HTMLDivElement>(null)
+  const isProjectReveal = variant === 'project'
 
   useEffect(() => {
     const transition = transitionRef.current
@@ -61,27 +67,32 @@ export function ClosingTransition({ siteName }: { siteName: string }) {
   }, [])
 
   return (
-    <div className={styles.transition} ref={transitionRef}>
+    <div
+      className={`${styles.transition} ${isProjectReveal ? styles.projectTransition : ''}`}
+      ref={transitionRef}
+    >
       <div className={styles.stage}>
-        <section aria-labelledby="closing-field-title" className={styles.imageField}>
-          <Image
-            alt="Bright contemporary residence framed by white concrete and open sky"
-            fill
-            sizes="100vw"
-            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=90"
-            unoptimized
-          />
-          <div aria-hidden="true" className={styles.grade} />
-          <div aria-hidden="true" className={styles.rules} />
+        {!isProjectReveal && (
+          <section aria-labelledby="closing-field-title" className={styles.imageField}>
+            <Image
+              alt="Bright contemporary residence framed by white concrete and open sky"
+              fill
+              sizes="100vw"
+              src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=90"
+              unoptimized
+            />
+            <div aria-hidden="true" className={styles.grade} />
+            <div aria-hidden="true" className={styles.rules} />
 
-          <div className={styles.copy}>
-            <h2 id="closing-field-title">
-              <span>Made to hold the</span>
-              <span>life that follows.</span>
-            </h2>
-            <p>Architecture / Interiors / Landscape</p>
-          </div>
-        </section>
+            <div className={styles.copy}>
+              <h2 id="closing-field-title">
+                <span>Made to hold the</span>
+                <span>life that follows.</span>
+              </h2>
+              <p>Architecture / Interiors / Landscape</p>
+            </div>
+          </section>
+        )}
 
         <div className={styles.footerLock}>
           <SiteFooter siteName={siteName} />

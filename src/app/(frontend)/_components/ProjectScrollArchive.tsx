@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 
 import styles from '../project-scroll-archive.module.css'
@@ -8,6 +9,7 @@ import styles from '../project-scroll-archive.module.css'
 const projects = [
   {
     title: 'House of Stillness',
+    href: '/projects/house-of-stillness',
     location: 'Alibaug, Maharashtra',
     year: '2026',
     status: 'In development',
@@ -91,7 +93,6 @@ type TimelineState = {
   nextIndex: number
   progress: number
   gapDistance: number
-  releaseProgress: number
 }
 
 const initialTimeline: TimelineState = {
@@ -99,7 +100,6 @@ const initialTimeline: TimelineState = {
   nextIndex: 0,
   progress: 0,
   gapDistance: 0,
-  releaseProgress: 0,
 }
 
 function clamp(value: number) {
@@ -129,13 +129,6 @@ function cardStyle(index: number, timeline: TimelineState): CSSProperties {
   const gap = timeline.gapDistance
 
   if (index === timeline.currentIndex) {
-    if (timeline.releaseProgress > 0) {
-      return {
-        transform: `translateY(${-timeline.releaseProgress * 100}%)`,
-        zIndex: 2,
-      }
-    }
-
     return {
       transform: isTransitioning
         ? `translateY(calc(${-timeline.progress * 100}% - ${timeline.progress * gap}px))`
@@ -193,7 +186,6 @@ export function ProjectScrollArchive() {
             nextIndex: index,
             progress: 0,
             gapDistance,
-            releaseProgress: 0,
           }
           break
         }
@@ -206,7 +198,6 @@ export function ProjectScrollArchive() {
             nextIndex: index,
             progress: 0,
             gapDistance,
-            releaseProgress: clamp(remaining / mediaHeight),
           }
           break
         }
@@ -217,7 +208,6 @@ export function ProjectScrollArchive() {
             nextIndex: index + 1,
             progress: clamp(remaining / transitionDistance),
             gapDistance,
-            releaseProgress: 0,
           }
           break
         }
@@ -230,8 +220,7 @@ export function ProjectScrollArchive() {
           previous.currentIndex === nextState.currentIndex &&
           previous.nextIndex === nextState.nextIndex &&
           Math.abs(previous.progress - nextState.progress) < 0.001 &&
-          Math.abs(previous.gapDistance - nextState.gapDistance) < 0.5 &&
-          Math.abs(previous.releaseProgress - nextState.releaseProgress) < 0.001
+          Math.abs(previous.gapDistance - nextState.gapDistance) < 0.5
         ) {
           return previous
         }
@@ -288,59 +277,67 @@ export function ProjectScrollArchive() {
 
       <section aria-label="Project information" className={styles.narratives}>
         <div className={styles.narrativeSticky}>
-          {projects.map((project, index) => (
-            <article
-              aria-label={project.title}
-              className={styles.projectCard}
-              key={project.title}
-              style={cardStyle(index, timeline)}
-            >
-              <div className={styles.mobileProject}>
-                <Image
-                  alt={project.alt}
-                  fill
-                  sizes="calc(100vw - 2.25rem)"
-                  src={project.image}
-                  unoptimized
-                />
-              </div>
-
-              <div className={styles.projectTop}>
-                <h2 className={styles.projectTitle}>{project.title}</h2>
-
-                <div className={styles.detailImage}>
+          <div className={styles.narrativeStage}>
+            {projects.map((project, index) => (
+              <article
+                aria-label={project.title}
+                className={styles.projectCard}
+                key={project.title}
+                style={cardStyle(index, timeline)}
+              >
+                <div className={styles.mobileProject}>
                   <Image
-                    alt={project.detailAlt}
+                    alt={project.alt}
                     fill
-                    sizes="(max-width: 760px) calc(100vw - 2.25rem), 30vw"
-                    src={project.detailImage}
+                    sizes="calc(100vw - 2.25rem)"
+                    src={project.image}
                     unoptimized
                   />
                 </div>
 
-                <p className={styles.description}>{project.description}</p>
-              </div>
+                <div className={styles.projectTop}>
+                  <h2 className={styles.projectTitle}>{project.title}</h2>
 
-              <div className={styles.projectBottom}>
-                <dl className={styles.metadata}>
-                  <div>
-                    <dt>Status</dt>
-                    <dd>{project.status}</dd>
+                  <div className={styles.detailImage}>
+                    <Image
+                      alt={project.detailAlt}
+                      fill
+                      sizes="(max-width: 760px) calc(100vw - 2.25rem), 30vw"
+                      src={project.detailImage}
+                      unoptimized
+                    />
                   </div>
-                  <div>
-                    <dt>Location</dt>
-                    <dd>{project.location}</dd>
-                  </div>
-                  <div>
-                    <dt>Year / Scope</dt>
-                    <dd>{project.year} / {project.scope}</dd>
-                  </div>
-                </dl>
 
-                <span className={styles.forthcoming}>Full project study forthcoming</span>
-              </div>
-            </article>
-          ))}
+                  <p className={styles.description}>{project.description}</p>
+                </div>
+
+                <div className={styles.projectBottom}>
+                  <dl className={styles.metadata}>
+                    <div>
+                      <dt>Status</dt>
+                      <dd>{project.status}</dd>
+                    </div>
+                    <div>
+                      <dt>Location</dt>
+                      <dd>{project.location}</dd>
+                    </div>
+                    <div>
+                      <dt>Year / Scope</dt>
+                      <dd>{project.year} / {project.scope}</dd>
+                    </div>
+                  </dl>
+
+                  {'href' in project && project.href ? (
+                  <Link className={styles.forthcoming} href={project.href}>
+                    View full project study
+                  </Link>
+                ) : (
+                  <span className={styles.forthcoming}>Full project study forthcoming</span>
+                )}
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
     </div>

@@ -1,5 +1,6 @@
 .page {
   position: relative;
+  z-index: 1;
   min-height: 100svh;
   padding-inline: var(--page-grid-pad);
   isolation: isolate;
@@ -11,7 +12,7 @@
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: var(--grid-gap);
-  padding: clamp(8rem, 13vh, 10rem) 0 clamp(5rem, 8vw, 8rem);
+  padding: clamp(8rem, 13vh, 10rem) 0 clamp(3.5rem, 5vw, 5rem);
 }
 
 .eyebrow,

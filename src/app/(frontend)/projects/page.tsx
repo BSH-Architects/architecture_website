@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 
 import { SITE_NAME } from '@/lib/site'
 
+import { ClosingTransition } from '../_components/ClosingTransition'
 import { ProjectScrollArchive } from '../_components/ProjectScrollArchive'
-import { SiteFooter } from '../_components/SiteFooter'
 import { SiteNavigation } from '../_components/SiteNavigation'
 
 import styles from './projects-page.module.css'
@@ -31,7 +31,7 @@ export default function ProjectsPage() {
         <ProjectScrollArchive />
       </main>
 
-      <SiteFooter siteName={SITE_NAME} />
+      <ClosingTransition siteName={SITE_NAME} variant="project" />
     </>
   )
 }
