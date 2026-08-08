@@ -5,6 +5,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { buildConfig } from 'payload'
+import sharp from 'sharp'
 
 import { Media } from './src/collections/Media'
 import { Projects } from './src/collections/Projects'
@@ -31,14 +32,10 @@ if (configuredR2Values > 0 && !hasR2Configuration) {
   )
 }
 
-// Object keys are intentionally independent from editable project names. This lets the
-// asset library and project URLs evolve without copying blobs or invalidating cache URLs.
 const mediaObjectPrefix = 'architecture-website/v1/media'
 
 const storagePlugins = [
   s3Storage({
-    // Keep Payload's storage fields (including `prefix`) present during local
-    // development. The schema and generated types are therefore identical to R2.
     alwaysInsertFields: true,
     bucket: r2Configuration.bucket ?? 'local-media',
     clientUploads: hasR2Configuration
@@ -67,8 +64,6 @@ const storagePlugins = [
         }
       : {},
     enabled: hasR2Configuration,
-    // The collection prefix remains stable; a future import can add a safe
-    // document prefix without replacing the application namespace.
     useCompositePrefixes: true,
   }),
 ]
@@ -76,10 +71,21 @@ const storagePlugins = [
 export default buildConfig({
   admin: {
     user: Users.slug,
+    components: {
+      beforeLogin: ['/src/components/admin/AdminBrand#AdminWelcome'],
+      graphics: {
+        Icon: '/src/components/admin/AdminBrand#StudioIcon',
+        Logo: '/src/components/admin/AdminBrand#StudioLogo',
+      },
+    },
     importMap: {
       baseDir: path.resolve(dirname),
       importMapFile: path.resolve(dirname, 'src/app/(payload)/admin/importMap.ts'),
     },
+    meta: {
+      titleSuffix: '— Studio CMS',
+    },
+    theme: 'dark',
   },
   collections: [Users, Media, Projects],
   db: postgresAdapter({
@@ -92,6 +98,7 @@ export default buildConfig({
   plugins: storagePlugins,
   secret: process.env.PAYLOAD_SECRET || '',
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL,
+  sharp,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

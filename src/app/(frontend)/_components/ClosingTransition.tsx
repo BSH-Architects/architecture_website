@@ -9,12 +9,34 @@ import styles from '../closing-transition.module.css'
 
 const FOOTER_START_OFFSET = 0.48
 
+const DEFAULT_IMAGE = {
+  alt: 'Bright contemporary residence framed by white concrete and open sky',
+  src: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=90',
+}
+const DEFAULT_HEADING_LINES = ['Made to hold the', 'life that follows.']
+const DEFAULT_LABEL = 'Architecture / Interiors / Landscape'
+
+type ClosingImage = {
+  alt: string
+  objectPosition?: string
+  src: string
+}
+
 type ClosingTransitionProps = {
+  headingLines?: string[]
+  image?: ClosingImage
+  label?: string
   siteName: string
   variant?: 'image' | 'project'
 }
 
-export function ClosingTransition({ siteName, variant = 'image' }: ClosingTransitionProps) {
+export function ClosingTransition({
+  headingLines = DEFAULT_HEADING_LINES,
+  image = DEFAULT_IMAGE,
+  label = DEFAULT_LABEL,
+  siteName,
+  variant = 'image',
+}: ClosingTransitionProps) {
   const transitionRef = useRef<HTMLDivElement>(null)
   const isProjectReveal = variant === 'project'
 
@@ -75,10 +97,11 @@ export function ClosingTransition({ siteName, variant = 'image' }: ClosingTransi
         {!isProjectReveal && (
           <section aria-labelledby="closing-field-title" className={styles.imageField}>
             <Image
-              alt="Bright contemporary residence framed by white concrete and open sky"
+              alt={image.alt}
               fill
               sizes="100vw"
-              src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=90"
+              src={image.src}
+              style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
               unoptimized
             />
             <div aria-hidden="true" className={styles.grade} />
@@ -86,10 +109,11 @@ export function ClosingTransition({ siteName, variant = 'image' }: ClosingTransi
 
             <div className={styles.copy}>
               <h2 id="closing-field-title">
-                <span>Made to hold the</span>
-                <span>life that follows.</span>
+                {headingLines.map((line, index) => (
+                  <span key={`${line}-${index}`}>{line}</span>
+                ))}
               </h2>
-              <p>Architecture / Interiors / Landscape</p>
+              <p>{label}</p>
             </div>
           </section>
         )}

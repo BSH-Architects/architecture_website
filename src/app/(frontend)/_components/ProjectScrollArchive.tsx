@@ -4,86 +4,22 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 
+import type { MediaReference } from '@/lib/cms'
+
 import styles from '../project-scroll-archive.module.css'
 
-const projects = [
-  {
-    title: 'House of Stillness',
-    href: '/projects/house-of-stillness',
-    location: 'Alibaug, Maharashtra',
-    year: '2026',
-    status: 'In development',
-    scope: 'Architecture / Interiors / Landscape',
-    description:
-      'A coastal residence organized around shade, cross-ventilation, and rooms that open gradually toward the landscape.',
-    image:
-      'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=2400&q=88',
-    alt: 'Minimal contemporary residence framed by concrete and landscape',
-    detailImage:
-      'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1600&q=86',
-    detailAlt: 'Warm interior detail with natural timber and stone',
-  },
-  {
-    title: 'Courtyard House',
-    location: 'Goa, India',
-    year: '2025',
-    status: 'Completed',
-    scope: 'Residential / Architecture',
-    description:
-      'A family house gathered around a planted court, with deep thresholds mediating between private rooms and shared life.',
-    image:
-      'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2200&q=88',
-    alt: 'Warm minimal interior with natural materials',
-    detailImage:
-      'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1600&q=86',
-    detailAlt: 'Quiet living space opening toward a planted courtyard',
-  },
-  {
-    title: 'Monolith Offices',
-    location: 'Bengaluru, India',
-    year: '2024',
-    status: 'Completed',
-    scope: 'Workplace / Architecture',
-    description:
-      'A compact workplace where a restrained material shell supports flexible occupation, diffuse light, and quiet concentration.',
-    image:
-      'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=2000&q=88',
-    alt: 'Contemporary urban architecture',
-    detailImage:
-      'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1600&q=86',
-    detailAlt: 'Open workplace with a restrained material palette',
-  },
-  {
-    title: 'Casa Terra',
-    location: 'Udaipur, India',
-    year: '2023',
-    status: 'Completed',
-    scope: 'Hospitality / Interiors',
-    description:
-      'Local stone, filtered daylight, and a sequence of compressed rooms shape a retreat grounded in the surrounding terrain.',
-    image:
-      'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=2000&q=88',
-    alt: 'Sculptural contemporary interior',
-    detailImage:
-      'https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1600&q=86',
-    detailAlt: 'Stone-lined hospitality interior in soft daylight',
-  },
-  {
-    title: 'Residence 18',
-    location: 'Mumbai, India',
-    year: '2022',
-    status: 'Completed',
-    scope: 'Residential / Interiors',
-    description:
-      'A city apartment reduced to proportion, warm stone, and carefully framed storage so everyday routines remain foregrounded.',
-    image:
-      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2200&q=88',
-    alt: 'Refined residential interior with warm stone surfaces',
-    detailImage:
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=86',
-    detailAlt: 'Residential detail with warm surfaces and filtered light',
-  },
-] as const
+export type ArchiveProject = {
+  description: string
+  detailImage: MediaReference
+  id: number | string
+  location: string
+  primaryImage: MediaReference
+  scope: string
+  slug: string
+  status: string
+  title: string
+  year: number
+}
 
 const HOLD_VIEWPORT_RATIO = 0.45
 const PROJECT_GAP_VIEWPORT_RATIO = 0.22
@@ -104,6 +40,10 @@ const initialTimeline: TimelineState = {
 
 function clamp(value: number) {
   return Math.min(Math.max(value, 0), 1)
+}
+
+function focalPosition(image: MediaReference) {
+  return `${image.focalX ?? 50}% ${image.focalY ?? 50}%`
 }
 
 function imageStyle(index: number, timeline: TimelineState): CSSProperties {
@@ -153,7 +93,7 @@ function cardStyle(index: number, timeline: TimelineState): CSSProperties {
   }
 }
 
-export function ProjectScrollArchive() {
+export function ProjectScrollArchive({ projects }: { projects: ArchiveProject[] }) {
   const experienceRef = useRef<HTMLDivElement>(null)
   const mediaRef = useRef<HTMLDivElement>(null)
   const [timeline, setTimeline] = useState<TimelineState>(initialTimeline)
@@ -242,15 +182,32 @@ export function ProjectScrollArchive() {
       window.removeEventListener('resize', requestUpdate)
       if (animationFrame) window.cancelAnimationFrame(animationFrame)
     }
-  }, [])
+  }, [projects.length])
+
+  if (projects.length === 0) {
+    return (
+      <section aria-label="Project information" className={styles.emptyState}>
+        <p>Published projects will appear here once they are added in the studio dashboard.</p>
+      </section>
+    )
+  }
 
   const announcedIndex =
     timeline.nextIndex !== timeline.currentIndex && timeline.progress >= 0.5
       ? timeline.nextIndex
       : timeline.currentIndex
+  const transitions = projects.length - 1
+  const scrollViewportHeight = 100 + projects.length * 45 + transitions * 22
+  const transitionHeights = Array.from(
+    { length: transitions },
+    () => 'var(--stage-height)',
+  ).join(' + ')
+  const experienceStyle: CSSProperties = {
+    height: `calc(${scrollViewportHeight}svh${transitionHeights ? ` + ${transitionHeights}` : ''})`,
+  }
 
   return (
-    <div className={styles.experience} ref={experienceRef}>
+    <div className={styles.experience} ref={experienceRef} style={experienceStyle}>
       <aside aria-label="Active project" className={styles.imageRail}>
         <div className={styles.imageSticky}>
           <div className={styles.mediaStage} ref={mediaRef}>
@@ -258,15 +215,16 @@ export function ProjectScrollArchive() {
               <figure
                 aria-hidden={index !== announcedIndex}
                 className={styles.projectFrame}
-                key={project.title}
+                key={project.id}
                 style={imageStyle(index, timeline)}
               >
                 <Image
-                  alt={project.alt}
+                  alt={project.primaryImage.alt || ''}
                   fill
                   priority={index === 0}
                   sizes="(max-width: 760px) 100vw, 58vw"
-                  src={project.image}
+                  src={project.primaryImage.url!}
+                  style={{ objectPosition: focalPosition(project.primaryImage) }}
                   unoptimized
                 />
               </figure>
@@ -282,15 +240,16 @@ export function ProjectScrollArchive() {
               <article
                 aria-label={project.title}
                 className={styles.projectCard}
-                key={project.title}
+                key={project.id}
                 style={cardStyle(index, timeline)}
               >
                 <div className={styles.mobileProject}>
                   <Image
-                    alt={project.alt}
+                    alt={project.primaryImage.alt || ''}
                     fill
                     sizes="calc(100vw - 2.25rem)"
-                    src={project.image}
+                    src={project.primaryImage.url!}
+                    style={{ objectPosition: focalPosition(project.primaryImage) }}
                     unoptimized
                   />
                 </div>
@@ -300,10 +259,11 @@ export function ProjectScrollArchive() {
 
                   <div className={styles.detailImage}>
                     <Image
-                      alt={project.detailAlt}
+                      alt={project.detailImage.alt || ''}
                       fill
                       sizes="(max-width: 760px) calc(100vw - 2.25rem), 30vw"
-                      src={project.detailImage}
+                      src={project.detailImage.url!}
+                      style={{ objectPosition: focalPosition(project.detailImage) }}
                       unoptimized
                     />
                   </div>
@@ -323,17 +283,15 @@ export function ProjectScrollArchive() {
                     </div>
                     <div>
                       <dt>Year / Scope</dt>
-                      <dd>{project.year} / {project.scope}</dd>
+                      <dd>
+                        {project.year} / {project.scope}
+                      </dd>
                     </div>
                   </dl>
 
-                  {'href' in project && project.href ? (
-                  <Link className={styles.forthcoming} href={project.href}>
+                  <Link className={styles.forthcoming} href={`/projects/${project.slug}`}>
                     View full project study
                   </Link>
-                ) : (
-                  <span className={styles.forthcoming}>Full project study forthcoming</span>
-                )}
                 </div>
               </article>
             ))}

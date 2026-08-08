@@ -222,12 +222,38 @@ export interface Project {
    */
   slug: string;
   /**
-   * Select the presentation template before adding sections.
+   * Classifies the project presentation for future template variations.
    */
   layout: 'editorial' | 'gallery' | 'technical';
-  location?: string | null;
-  year?: number | null;
+  /**
+   * For example: Completed, In development, or Competition.
+   */
+  status: string;
+  location: string;
+  year: number;
+  /**
+   * For example: Architecture / Interiors / Landscape.
+   */
+  scope: string;
+  /**
+   * The shared project summary. It appears in Our Work and at the beginning of the project page.
+   */
+  description: string;
+  /**
+   * Used as the large Our Work image and the project-page cover.
+   */
   coverImage: number | Media;
+  /**
+   * The second image shown beside this project in the Our Work archive.
+   */
+  archiveDetailImage: number | Media;
+  /**
+   * Optional. The primary image is reused when this is empty.
+   */
+  closingImage?: (number | null) | Media;
+  /**
+   * Optional longer copy shown after the shared description on the project page only.
+   */
   intro?: {
     root: {
       type: string;
@@ -243,6 +269,9 @@ export interface Project {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Add and reorder the project-page narrative, images, and galleries.
+   */
   sections?: (ProjectHeroBlock | TextImageBlock | ImageGalleryBlock)[] | null;
   updatedAt: string;
   createdAt: string;
@@ -468,9 +497,14 @@ export interface ProjectsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   layout?: T;
+  status?: T;
   location?: T;
   year?: T;
+  scope?: T;
+  description?: T;
   coverImage?: T;
+  archiveDetailImage?: T;
+  closingImage?: T;
   intro?: T;
   sections?:
     | T

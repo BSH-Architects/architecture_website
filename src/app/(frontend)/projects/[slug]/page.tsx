@@ -2,15 +2,18 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { SITE_NAME } from '@/lib/site'
 import { cmsIsConfigured, getPublishedProject, mediaData } from '@/lib/cms'
+import { SITE_NAME } from '@/lib/site'
 
 import { ClosingTransition } from '../../_components/ClosingTransition'
 import { SiteNavigation } from '../../_components/SiteNavigation'
 
+import { ProjectImageCarousel } from './ProjectImageCarousel'
 import styles from './project-detail.module.css'
 
 export const dynamic = 'force-dynamic'
+
+const allowPlaceholderContent = process.env.NODE_ENV !== 'production'
 
 type DetailImage = {
   alt: string
@@ -38,13 +41,12 @@ type DetailSection = DetailFeature | DetailGallery
 type DetailProject = {
   closingImage: DetailImage
   cover: DetailImage
-  index: string
   intro: string[]
   location?: string | null
+  scope?: string | null
   sections: DetailSection[]
   status?: string | null
   title: string
-  total: string
   year?: number | string | null
 }
 
@@ -59,8 +61,7 @@ const previewProjects: Record<string, DetailProject> = {
     status: 'In development',
     location: 'Alibaug, Maharashtra',
     year: 2026,
-    index: '01',
-    total: '/05',
+    scope: 'Architecture / Interiors / Landscape',
     cover: {
       alt: 'Minimal contemporary residence framed by concrete and landscape',
       url: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=2400&q=88',
@@ -93,6 +94,14 @@ const previewProjects: Record<string, DetailProject> = {
           {
             alt: 'Residential detail with warm surfaces and filtered light',
             url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1400&q=86',
+          },
+          {
+            alt: 'Concrete and timber facade beneath a broad roof plane',
+            url: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1400&q=86',
+          },
+          {
+            alt: 'Residence opening onto a planted outdoor room',
+            url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=86',
           },
         ],
       },
@@ -176,16 +185,21 @@ function projectDetail(project: CmsProject): DetailProject | null {
     }
   }
 
+  const intro = [project.description, ...richTextParagraphs(project.intro)].filter(
+    (paragraph, index, paragraphs) =>
+      Boolean(paragraph) && paragraphs.findIndex((candidate) => candidate === paragraph) === index,
+  )
+
   return {
     title: project.title,
-    intro: richTextParagraphs(project.intro),
+    intro,
     location: project.location,
+    scope: project.scope,
+    status: project.status,
     year: project.year,
-    index: '01',
-    total: '/Archive',
     cover,
     sections,
-    closingImage: cover,
+    closingImage: detailImage(project.closingImage) ?? cover,
   }
 }
 
@@ -223,7 +237,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         return null
       })
     : null
-  const project = cmsProject ? projectDetail(cmsProject) : previewProjects[slug]
+  const project = cmsProject
+    ? projectDetail(cmsProject)
+    : !cmsIsConfigured && allowPlaceholderContent
+      ? previewProjects[slug]
+      : null
 
   if (!project) notFound()
 
@@ -231,7 +249,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     project.status ? { label: 'Status', value: project.status } : null,
     project.location ? { label: 'Location', value: project.location } : null,
     project.year ? { label: 'Year', value: String(project.year) } : null,
+    project.scope ? { label: 'Scope', value: project.scope } : null,
   ].filter((fact): fact is { label: string; value: string } => Boolean(fact))
+  const closingLabel =
+    [project.location, project.year].filter(Boolean).join(' / ') || 'Selected project'
 
   return (
     <>
@@ -257,11 +278,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                 </div>
               ))}
             </dl>
-
-            <span aria-label={`Project ${project.index}`} className={styles.projectIndex}>
-              {project.index}
-            </span>
-            <span className={styles.projectTotal}>{project.total}</span>
           </header>
 
           <figure className={styles.cover}>
@@ -274,14 +290,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                 return (
                   <section className={styles.gallerySection} key={`gallery-${index}`}>
                     {section.heading && <h2>{section.heading}</h2>}
-                    <div className={styles.gallery}>
-                      {section.images.map((image, imageIndex) => (
-                        <figure key={`${image.url}-${imageIndex}`}>
-                          <ProjectImage image={image} />
-                          {image.caption && <figcaption>{image.caption}</figcaption>}
-                        </figure>
-                      ))}
-                    </div>
+                    <ProjectImageCarousel
+                      images={section.images}
+                      label={section.heading || 'Project image gallery'}
+                    />
                   </section>
                 )
               }
@@ -306,14 +318,19 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               )
             })}
           </div>
-
-          <figure className={styles.closingVisual}>
-            <ProjectImage image={project.closingImage} />
-          </figure>
         </article>
       </main>
 
-      <ClosingTransition siteName={SITE_NAME} variant="project" />
+      <ClosingTransition
+        headingLines={[project.title]}
+        image={{
+          alt: project.closingImage.alt,
+          objectPosition: `${project.closingImage.focalX ?? 50}% ${project.closingImage.focalY ?? 50}%`,
+          src: project.closingImage.url,
+        }}
+        label={closingLabel}
+        siteName={SITE_NAME}
+      />
     </>
   )
 }

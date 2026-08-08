@@ -5,7 +5,18 @@ import type { Homepage, Media, Project } from '../../payload-types'
 
 export type ProjectSummary = Pick<
   Project,
-  'coverImage' | 'id' | 'layout' | 'location' | 'slug' | 'title' | 'year'
+  | 'archiveDetailImage'
+  | 'closingImage'
+  | 'coverImage'
+  | 'description'
+  | 'id'
+  | 'layout'
+  | 'location'
+  | 'scope'
+  | 'slug'
+  | 'status'
+  | 'title'
+  | 'year'
 >
 
 export type MediaRendition = 'card' | 'wide'
@@ -27,28 +38,34 @@ function relationshipID(value: { id: number | string } | number | string | null 
   return value === null || value === undefined ? null : String(value)
 }
 
+export async function getPublishedProjects(): Promise<ProjectSummary[]> {
+  const payload = await payloadClient()
+  const result = await payload.find({
+    collection: 'projects',
+    depth: 1,
+    draft: false,
+    limit: 0,
+    overrideAccess: false,
+    pagination: false,
+    sort: '-year',
+    where: { _status: { equals: 'published' } },
+  })
+
+  return result.docs as ProjectSummary[]
+}
+
 export async function getHomepageContent(): Promise<HomepageContent> {
   const payload = await payloadClient()
-  const [homepage, projectsResult] = await Promise.all([
+  const [homepage, publishedProjects] = await Promise.all([
     payload.findGlobal({
       slug: 'homepage',
       depth: 1,
       draft: false,
       overrideAccess: true,
     }),
-    payload.find({
-      collection: 'projects',
-      depth: 1,
-      draft: false,
-      limit: 0,
-      overrideAccess: false,
-      pagination: false,
-      sort: '-updatedAt',
-      where: { _status: { equals: 'published' } },
-    }),
+    getPublishedProjects(),
   ])
 
-  const publishedProjects = projectsResult.docs as ProjectSummary[]
   const projectsByID = new Map(
     publishedProjects.map((project) => [String(project.id), project]),
   )
@@ -56,11 +73,12 @@ export async function getHomepageContent(): Promise<HomepageContent> {
   const orderedProjects = (homepage.projectOrder ?? [])
     .map((project) => projectsByID.get(relationshipID(project) ?? ''))
     .filter((project): project is ProjectSummary => Boolean(project))
+  const selectedProjects = orderedProjects.length > 0 ? orderedProjects : publishedProjects
 
   return {
     featuredProject: featuredID ? projectsByID.get(featuredID) ?? null : null,
     homepage,
-    projects: orderedProjects.length > 0 ? orderedProjects : publishedProjects,
+    projects: selectedProjects.filter((project) => String(project.id) !== featuredID),
   }
 }
 

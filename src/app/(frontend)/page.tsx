@@ -1,12 +1,4 @@
-import Image from 'next/image'
-import Link from 'next/link'
-
-import {
-  cmsIsConfigured,
-  getHomepageContent,
-  mediaData,
-  type ProjectSummary,
-} from '@/lib/cms'
+import { cmsIsConfigured, getHomepageContent, mediaData } from '@/lib/cms'
 import { heroPlaceholder, previewHeroImagePath, SITE_NAME } from '@/lib/site'
 
 import { ClosingTransition } from './_components/ClosingTransition'
@@ -19,10 +11,10 @@ import { SiteNavigation } from './_components/SiteNavigation'
 
 export const dynamic = 'force-dynamic'
 
-const INDEX_ANCHOR = '#projects'
 const POSITION_ANCHOR = '#position-study'
+const PROJECTS_ANCHOR = '#project-field-study'
 
-/** Placeholder hero copy is a development affordance, never a production fallback. */
+/** Placeholder content is a local design affordance, never a production fallback. */
 const allowPlaceholderContent = process.env.NODE_ENV !== 'production'
 
 export default async function HomePage() {
@@ -41,7 +33,7 @@ export default async function HomePage() {
   const heroImage = mediaData(hero?.image, 'wide')
   const previewImageSrc = content ? null : previewHeroImagePath()
   const heroSummary = hero?.summary || heroPlaceholder.summary
-  const heroTarget = allowPlaceholderContent ? POSITION_ANCHOR : INDEX_ANCHOR
+  const heroTarget = content ? PROJECTS_ANCHOR : POSITION_ANCHOR
 
   return (
     <>
@@ -49,7 +41,7 @@ export default async function HomePage() {
         <SiteNavigation activePage="home" />
 
         <HeroStudyTwo
-          brand={SITE_NAME}
+          brand={hero?.title || SITE_NAME}
           eyebrow={hero?.eyebrow || heroPlaceholder.eyebrow}
           image={heroImage}
           indexHref={heroTarget}
@@ -57,88 +49,26 @@ export default async function HomePage() {
           summary={heroSummary}
         />
 
-      {allowPlaceholderContent && (
-        <PositionStudy image={heroImage} previewImageSrc={previewImageSrc} />
-      )}
+        {allowPlaceholderContent && !content && (
+          <PositionStudy image={heroImage} previewImageSrc={previewImageSrc} />
+        )}
 
-      {allowPlaceholderContent && <ProjectFieldStudy />}
-      {allowPlaceholderContent && <PracticeStudy />}
-      {allowPlaceholderContent && <PeopleStudy />}
+        {content && (
+          <ProjectFieldStudy
+            featuredProject={content.featuredProject}
+            projects={content.projects}
+          />
+        )}
 
-      {content && (
-        <>
-          {content.featuredProject && <ProjectFeature project={content.featuredProject} />}
-          <ProjectIndex projects={content.projects} />
-        </>
-      )}
+        {allowPlaceholderContent && !content && <PracticeStudy />}
+        {allowPlaceholderContent && !content && <PeopleStudy />}
       </main>
       <ClosingTransition siteName={SITE_NAME} />
     </>
   )
 }
 
-function ProjectIndex({ projects }: { projects: ProjectSummary[] }) {
-  return (
-    <section className="content-preview project-index" id="projects">
-      <div className="content-preview__inner">
-        <p className="utility-label">Published work</p>
-        {projects.length > 0 ? (
-          <ul className="project-list">
-            {projects.map((project) => (
-              <li key={project.id}>
-                <Link href={`/projects/${project.slug}`}>
-                  <span>{project.title}</span>
-                  <span>
-                    {[project.location, project.year].filter(Boolean).join(' · ') || 'View project'}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="empty-copy">
-            Publish a project in <Link href="/admin">Payload</Link>, then select and order it in the
-            Homepage global.
-          </p>
-        )}
-      </div>
-    </section>
-  )
-}
-
-function ProjectFeature({ project }: { project: ProjectSummary }) {
-  const image = mediaData(project.coverImage, 'card')
-
-  return (
-    <section className="content-preview featured-project">
-      <div className="content-preview__inner featured-project__grid">
-        <div>
-          <p className="utility-label">Featured project</p>
-          <h2>{project.title}</h2>
-          {(project.location || project.year) && (
-            <p className="lede">{[project.location, project.year].filter(Boolean).join(' · ')}</p>
-          )}
-          <Link className="text-link" href={`/projects/${project.slug}`}>
-            Open project
-          </Link>
-        </div>
-        {image?.url && (
-          <div className="featured-project__image">
-            <Image
-              alt={image.alt || ''}
-              fill
-              sizes="(max-width: 700px) 100vw, 50vw"
-              src={image.url}
-              unoptimized
-            />
-          </div>
-        )}
-      </div>
-    </section>
-  )
-}
-
-/** Production: never invents content. */
+/** Production never invents portfolio content. */
 function UnavailableState({ configured }: { configured: boolean }) {
   return (
     <main className="site-shell">
