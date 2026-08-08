@@ -1,22 +1,14 @@
 import Image from 'next/image'
 
 import type { MediaReference } from '@/lib/cms'
+import { positionSectionDefaults } from '@/content/homepageDefaults'
 
 import styles from '../position-study.module.css'
 
-const POSITION_COPY = {
-  title: [
-    'Architecture begins with what',
-    'is already there and makes room',
-    'for what comes next.',
-  ],
-  description: [
-    'We start with climate, terrain, movement, views, and the routines that give a place its character.',
-    'Plans are reduced until structure, material, and daily use read as one clear idea. The result is quiet by design: spaces shaped by proportion, daylight, and the way they are lived in.',
-  ],
-} as const
-
 type PositionStudyProps = {
+  descriptionPrimary?: string | null
+  descriptionSecondary?: string | null
+  heading?: string | null
   image: MediaReference | null
   previewImageSrc?: string | null
 }
@@ -30,9 +22,23 @@ function focalPosition(image: MediaReference | null) {
   return `${x}% ${y}%`
 }
 
-export function PositionStudy({ image, previewImageSrc }: PositionStudyProps) {
+export function PositionStudy({
+  descriptionPrimary,
+  descriptionSecondary,
+  heading,
+  image,
+  previewImageSrc,
+}: PositionStudyProps) {
   const source = image?.url ?? previewImageSrc ?? null
   const objectPosition = focalPosition(image)
+  const headingLines = (heading?.trim() || positionSectionDefaults.heading)
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+  const descriptions = [
+    descriptionPrimary?.trim() || positionSectionDefaults.descriptionPrimary,
+    descriptionSecondary?.trim() || positionSectionDefaults.descriptionSecondary,
+  ]
 
   return (
     <section
@@ -59,14 +65,14 @@ export function PositionStudy({ image, previewImageSrc }: PositionStudyProps) {
 
       <div className={styles.copy}>
         <h2 id="position-study-title">
-          {POSITION_COPY.title.map((line) => (
-            <span key={line}>{line}</span>
+          {headingLines.map((line, index) => (
+            <span key={`${line}-${index}`}>{line}</span>
           ))}
         </h2>
 
         <div className={styles.description}>
-          {POSITION_COPY.description.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
+          {descriptions.map((paragraph, index) => (
+            <p key={`${paragraph}-${index}`}>{paragraph}</p>
           ))}
         </div>
       </div>

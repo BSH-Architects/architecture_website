@@ -16,7 +16,8 @@
     "generate:importmap": "payload generate:importmap",
     "migrate": "payload migrate",
     "migrate:create": "payload migrate:create",
-    "restore:content": "payload run scripts/restore-original-content.ts"
+    "restore:content": "payload run scripts/restore-original-content.ts",
+    "verify:homepage": "payload run scripts/verify-homepage-content.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.87.1",

@@ -30,6 +30,8 @@ export default async function HomePage() {
 
   const hero = content?.homepage.hero
   const heroImage = mediaData(hero?.image, 'wide')
+  const position = content?.homepage.position
+  const positionImage = mediaData(position?.image, 'wide') ?? heroImage
   const previewImageSrc = content ? null : previewHeroImagePath()
   const heroSummary = hero?.summary || heroPlaceholder.summary
   const heroTarget = POSITION_ANCHOR
@@ -48,7 +50,13 @@ export default async function HomePage() {
           summary={heroSummary}
         />
 
-        <PositionStudy image={heroImage} previewImageSrc={previewImageSrc} />
+        <PositionStudy
+          descriptionPrimary={position?.descriptionPrimary}
+          descriptionSecondary={position?.descriptionSecondary}
+          heading={position?.heading}
+          image={positionImage}
+          previewImageSrc={previewImageSrc}
+        />
 
         {content && (
           <ProjectFieldStudy

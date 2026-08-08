@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { authenticated } from '../access'
+import { positionSectionDefaults } from '../content/homepageDefaults'
 
 export const Homepage: GlobalConfig = {
   slug: 'homepage',
@@ -28,6 +29,52 @@ export const Homepage: GlobalConfig = {
           type: 'upload',
           relationTo: 'media',
           required: true,
+        },
+      ],
+    },
+    {
+      name: 'position',
+      type: 'group',
+      label: 'Position section',
+      admin: {
+        description:
+          'Controls the image and statement directly below the homepage hero. This image is independent from the hero and project images.',
+      },
+      fields: [
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+          admin: {
+            description: 'Portrait-oriented or crop-safe architectural imagery works best here.',
+          },
+        },
+        {
+          name: 'heading',
+          type: 'textarea',
+          required: true,
+          defaultValue: positionSectionDefaults.heading,
+          admin: {
+            description: 'Use line breaks to control the three-line editorial heading.',
+            rows: 3,
+          },
+        },
+        {
+          name: 'descriptionPrimary',
+          type: 'textarea',
+          required: true,
+          label: 'Description — first paragraph',
+          defaultValue: positionSectionDefaults.descriptionPrimary,
+          admin: { rows: 3 },
+        },
+        {
+          name: 'descriptionSecondary',
+          type: 'textarea',
+          required: true,
+          label: 'Description — second paragraph',
+          defaultValue: positionSectionDefaults.descriptionSecondary,
+          admin: { rows: 4 },
         },
       ],
     },

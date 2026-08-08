@@ -610,6 +610,21 @@ export interface Homepage {
     image: number | Media;
   };
   /**
+   * Controls the image and statement directly below the homepage hero. This image is independent from the hero and project images.
+   */
+  position: {
+    /**
+     * Portrait-oriented or crop-safe architectural imagery works best here.
+     */
+    image: number | Media;
+    /**
+     * Use line breaks to control the three-line editorial heading.
+     */
+    heading: string;
+    descriptionPrimary: string;
+    descriptionSecondary: string;
+  };
+  /**
    * The star project shown directly after the hero.
    */
   featuredProject?: (number | null) | Project;
@@ -633,6 +648,14 @@ export interface HomepageSelect<T extends boolean = true> {
         title?: T;
         summary?: T;
         image?: T;
+      };
+  position?:
+    | T
+    | {
+        image?: T;
+        heading?: T;
+        descriptionPrimary?: T;
+        descriptionSecondary?: T;
       };
   featuredProject?: T;
   projectOrder?: T;

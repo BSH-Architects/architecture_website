@@ -5,6 +5,7 @@ import config from '@payload-config'
 import { getPayload, type Payload, type RequiredDataFromCollectionSlug } from 'payload'
 
 import type { Media, Project } from '../payload-types'
+import { positionSectionDefaults } from '../src/content/homepageDefaults'
 
 type AssetGroup = NonNullable<Media['assetGroup']>
 
@@ -534,8 +535,11 @@ async function restore() {
     await relateProjectMedia(payload, mediaByKey, projectsBySlug)
 
     const homepageHero = mediaByKey.get('homepageHero')
+    const positionImage = mediaByKey.get('warmInterior')
     const featuredProject = projectsBySlug.get('house-of-stillness')
-    if (!homepageHero || !featuredProject) throw new Error('Homepage restoration data is incomplete.')
+    if (!homepageHero || !positionImage || !featuredProject) {
+      throw new Error('Homepage restoration data is incomplete.')
+    }
 
     await payload.updateGlobal({
       slug: 'homepage',
@@ -545,6 +549,12 @@ async function restore() {
           title: 'Studio',
           summary: 'Rooms shaped by daylight, honest materials, and plans made to endure.',
           image: homepageHero.id,
+        },
+        position: {
+          image: positionImage.id,
+          heading: positionSectionDefaults.heading,
+          descriptionPrimary: positionSectionDefaults.descriptionPrimary,
+          descriptionSecondary: positionSectionDefaults.descriptionSecondary,
         },
         featuredProject: featuredProject.id,
         projectOrder: projectDefinitions.map((project) => {
