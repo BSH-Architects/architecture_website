@@ -87,7 +87,6 @@ export function HeroStudyTwo({
 
       <header className={styles.topRail}>
         <span>{eyebrow || 'Architecture / Interiors / Urban'}</span>
-        <span>Hero study 02</span>
       </header>
 
       <div className={styles.nameMask}>

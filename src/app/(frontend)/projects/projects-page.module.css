@@ -1,0 +1,72 @@
+.page {
+  position: relative;
+  min-height: 100svh;
+  padding-inline: var(--page-grid-pad);
+  isolation: isolate;
+  background: var(--charcoal);
+  color: var(--white);
+}
+
+.intro {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gap);
+  padding: clamp(8rem, 13vh, 10rem) 0 clamp(5rem, 8vw, 8rem);
+}
+
+.eyebrow,
+.introduction {
+  font-family: var(--font-family-mono);
+}
+
+.eyebrow {
+  grid-column: 1 / 5;
+  margin: 0 0 var(--space-6);
+  color: var(--stone);
+  font-size: var(--font-size-datum);
+  letter-spacing: var(--letter-spacing-label);
+  text-transform: uppercase;
+}
+
+.intro h1 {
+  grid-column: 1 / 8;
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: clamp(4.5rem, 10vw, 10rem);
+  font-weight: var(--font-weight-regular);
+  line-height: 0.82;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.introduction {
+  grid-column: 1 / 7;
+  max-width: 54ch;
+  margin: var(--space-6) 0 0;
+  color: var(--stone);
+  font-size: clamp(0.875rem, 0.18vw + 0.84rem, 1rem);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+@media (max-width: 47.5rem) {
+  .intro {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    padding-block: 8rem var(--space-section);
+  }
+
+  .eyebrow {
+    grid-column: 1 / 5;
+  }
+
+  .intro h1 {
+    grid-column: 1 / -1;
+    font-size: clamp(4rem, 18vw, 7rem);
+  }
+
+  .introduction {
+    grid-column: 1 / -1;
+    max-width: 38ch;
+  }
+}

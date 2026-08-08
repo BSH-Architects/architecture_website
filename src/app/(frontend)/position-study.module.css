@@ -1,11 +1,51 @@
 .section {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: var(--grid-gap);
   align-items: center;
   padding: clamp(5rem, 7vw, 7rem) var(--page-grid-pad);
+  overflow: hidden;
+  isolation: isolate;
   background: var(--charcoal);
   color: var(--paper);
+}
+
+.section::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset-block: 0;
+  inset-inline: var(--page-grid-pad);
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--color-hero-line) 0 var(--border-width),
+    transparent var(--border-width) calc((100% + var(--grid-gap)) / var(--grid-columns))
+  );
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.section::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset-block: 0;
+  inset-inline-end: var(--page-grid-pad);
+  width: var(--border-width);
+  background: var(--color-hero-line);
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.media {
+  position: relative;
+  z-index: 1;
+}
+
+.copy {
+  position: relative;
+  z-index: 3;
 }
 
 .media {
@@ -139,4 +179,10 @@
     width: 100%;
     transform: none;
   }
+}
+
+
+/* Match the generous outer rhythm used by the key statement section. */
+.section {
+  padding-block: var(--space-section-spacious);
 }

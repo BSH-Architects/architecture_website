@@ -86,7 +86,7 @@ export function ProjectFieldStudy() {
             ))}
           </div>
 
-          <Link className={styles.projectLink} href="#projects">
+          <Link className={styles.projectLink} href="/projects">
             View project
           </Link>
         </div>
@@ -102,7 +102,7 @@ export function ProjectFieldStudy() {
           {projects.map((project) => (
             <Link
               className={`${styles.projectCard} ${styles[project.layout]}`}
-              href="#projects"
+              href="/projects"
               key={project.title}
             >
               <div className={styles.projectImage}>

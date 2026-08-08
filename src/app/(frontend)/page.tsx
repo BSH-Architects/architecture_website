@@ -7,16 +7,15 @@ import {
   mediaData,
   type ProjectSummary,
 } from '@/lib/cms'
-import { heroPlaceholder, previewHeroImagePath, SITE_DATUM, SITE_NAME } from '@/lib/site'
+import { heroPlaceholder, previewHeroImagePath, SITE_NAME } from '@/lib/site'
 
-import { HeroStudyNav } from './_components/HeroStudyNav'
+import { ClosingTransition } from './_components/ClosingTransition'
 import { HeroStudyTwo } from './_components/HeroStudyTwo'
 import { PeopleStudy } from './_components/PeopleStudy'
 import { PositionStudy } from './_components/PositionStudy'
 import { PracticeStudy } from './_components/PracticeStudy'
 import { ProjectFieldStudy } from './_components/ProjectFieldStudy'
-import { ClosingTransition } from './_components/ClosingTransition'
-import { SiteHero } from './_components/SiteHero'
+import { SiteNavigation } from './_components/SiteNavigation'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,13 +25,7 @@ const POSITION_ANCHOR = '#position-study'
 /** Placeholder hero copy is a development affordance, never a production fallback. */
 const allowPlaceholderContent = process.env.NODE_ENV !== 'production'
 
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams: Promise<{ hero?: string }>
-}) {
-  const requestedHero = (await searchParams).hero
-  const selectedHero = allowPlaceholderContent ? (requestedHero === '01' ? '01' : '02') : '01'
+export default async function HomePage() {
   const content = cmsIsConfigured
     ? await getHomepageContent().catch((error: unknown) => {
         console.error('Unable to load homepage content.', error)
@@ -48,28 +41,13 @@ export default async function HomePage({
   const heroImage = mediaData(hero?.image, 'wide')
   const previewImageSrc = content ? null : previewHeroImagePath()
   const heroSummary = hero?.summary || heroPlaceholder.summary
-  const heroTitle = hero?.title || heroPlaceholder.title
   const heroTarget = allowPlaceholderContent ? POSITION_ANCHOR : INDEX_ANCHOR
 
   return (
     <>
       <main className="site-shell" id="top">
-      {allowPlaceholderContent && <HeroStudyNav activeStudy={selectedHero} />}
+        <SiteNavigation activePage="home" />
 
-      {selectedHero === '01' ? (
-        <SiteHero
-          brand={SITE_NAME}
-          eyebrow={hero?.eyebrow || heroPlaceholder.eyebrow}
-          image={heroImage}
-          indexHref={heroTarget}
-          practice={SITE_DATUM}
-          previewImageSrc={previewImageSrc}
-          projectCount={content ? content.projects.length : null}
-          sectionID="hero-study-01"
-          summary={heroSummary}
-          title={heroTitle}
-        />
-      ) : (
         <HeroStudyTwo
           brand={SITE_NAME}
           eyebrow={hero?.eyebrow || heroPlaceholder.eyebrow}
@@ -78,7 +56,6 @@ export default async function HomePage({
           previewImageSrc={previewImageSrc}
           summary={heroSummary}
         />
-      )}
 
       {allowPlaceholderContent && (
         <PositionStudy image={heroImage} previewImageSrc={previewImageSrc} />

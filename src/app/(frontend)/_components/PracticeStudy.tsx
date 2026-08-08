@@ -5,19 +5,31 @@ import styles from '../practice-study.module.css'
 const disciplines = [
   {
     title: 'Residential',
-    description: 'Homes shaped around climate, routine, and long-term change.',
+    descriptions: [
+      'Homes shaped around climate and daily routine.',
+      'Designed to support long-term change.',
+    ],
   },
   {
     title: 'Hospitality',
-    description: 'Places where sequence, material, and light establish atmosphere.',
+    descriptions: [
+      'Sequence and material establish the atmosphere.',
+      'Light carries the experience through each space.',
+    ],
   },
   {
     title: 'Interiors',
-    description: 'Interior architecture carried through from structure and proportion.',
+    descriptions: [
+      'Interior architecture begins with structure and proportion.',
+      'Detail and everyday use are resolved together.',
+    ],
   },
   {
     title: 'Landscape',
-    description: 'Built and natural systems developed as one continuous condition.',
+    descriptions: [
+      'Built and natural systems are developed together.',
+      'One continuous condition extends across the site.',
+    ],
   },
 ] as const
 
@@ -55,7 +67,11 @@ export function PracticeStudy() {
           <article className={styles.discipline} key={discipline.title}>
             <span className={styles.index}>{String(index + 1).padStart(2, '0')}</span>
             <h3>{discipline.title}</h3>
-            <p>{discipline.description}</p>
+            <div className={styles.disciplineCopy}>
+              {discipline.descriptions.map((description) => (
+                <p key={description}>{description}</p>
+              ))}
+            </div>
           </article>
         ))}
       </div>

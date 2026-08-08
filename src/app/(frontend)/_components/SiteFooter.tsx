@@ -3,9 +3,9 @@ import Link from 'next/link'
 import styles from '../site-footer.module.css'
 
 const footerLinks = [
-  { href: '#project-field-study', label: 'Selected work' },
-  { href: '#practice-study', label: 'Approach' },
-  { href: '#people-study', label: 'People' },
+  { href: '/projects', label: 'Selected work' },
+  { href: '/#practice-study', label: 'Approach' },
+  { href: '/#people-study', label: 'People' },
 ] as const
 
 export function SiteFooter({ siteName }: { siteName: string }) {
@@ -16,7 +16,7 @@ export function SiteFooter({ siteName }: { siteName: string }) {
       <div className={styles.top}>
         <div className={styles.lead}>
           <h2>Every project begins in conversation.</h2>
-          <Link href="#project-field-study">
+          <Link href="/projects">
             Explore selected work <span aria-hidden="true">→</span>
           </Link>
         </div>

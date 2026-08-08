@@ -101,6 +101,7 @@
 }
 
 .first {
+  width: calc(100% + var(--grid-gap));
   grid-column: 1 / span 5;
   margin-top: clamp(5rem, 9vw, 9rem);
 }
@@ -229,6 +230,7 @@
 
   .first,
   .second {
+    width: 100%;
     grid-column: 1 / -1;
     margin-top: 0;
   }
