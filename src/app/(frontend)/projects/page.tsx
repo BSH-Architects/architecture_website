@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { cmsIsConfigured, getPublishedProjects, mediaData } from '@/lib/cms'
 import { SITE_NAME } from '@/lib/site'
 
-import { ClosingTransition } from '../_components/ClosingTransition'
+import { PageFooter } from '../_components/PageFooter'
 import {
   ProjectScrollArchive,
   type ArchiveProject,
@@ -74,7 +74,7 @@ export default async function ProjectsPage() {
         <ProjectScrollArchive projects={projects} />
       </main>
 
-      <ClosingTransition siteName={SITE_NAME} variant="project" />
+      <PageFooter siteName={SITE_NAME} />
     </>
   )
 }

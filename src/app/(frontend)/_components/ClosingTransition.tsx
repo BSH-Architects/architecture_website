@@ -29,7 +29,6 @@ type ClosingTransitionProps = {
   image?: ClosingImage
   label?: string
   siteName: string
-  variant?: 'image' | 'project'
 }
 
 export function ClosingTransition({
@@ -37,10 +36,8 @@ export function ClosingTransition({
   image = DEFAULT_IMAGE,
   label = DEFAULT_LABEL,
   siteName,
-  variant = 'image',
 }: ClosingTransitionProps) {
   const transitionRef = useRef<HTMLDivElement>(null)
-  const isProjectReveal = variant === 'project'
 
   useEffect(() => {
     const transition = transitionRef.current
@@ -91,34 +88,29 @@ export function ClosingTransition({
   }, [])
 
   return (
-    <div
-      className={`${styles.transition} ${isProjectReveal ? styles.projectTransition : ''}`}
-      ref={transitionRef}
-    >
+    <div className={styles.transition} ref={transitionRef}>
       <div className={styles.stage}>
-        {!isProjectReveal && (
-          <section aria-labelledby="closing-field-title" className={styles.imageField}>
-            <Image
-              alt={image.alt}
-              fill
-              sizes="100vw"
-              src={image.src}
-              style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
-              unoptimized
-            />
-            <div aria-hidden="true" className={styles.grade} />
-            <div aria-hidden="true" className={styles.rules} />
+        <section aria-labelledby="closing-field-title" className={styles.imageField}>
+          <Image
+            alt={image.alt}
+            fill
+            sizes="100vw"
+            src={image.src}
+            style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
+            unoptimized
+          />
+          <div aria-hidden="true" className={styles.grade} />
+          <div aria-hidden="true" className={styles.rules} />
 
-            <div className={styles.copy}>
-              <h2 id="closing-field-title">
-                {headingLines.map((line, index) => (
-                  <span key={`${line}-${index}`}>{line}</span>
-                ))}
-              </h2>
-              <p>{label}</p>
-            </div>
-          </section>
-        )}
+          <div className={styles.copy}>
+            <h2 id="closing-field-title">
+              {headingLines.map((line, index) => (
+                <span key={`${line}-${index}`}>{line}</span>
+              ))}
+            </h2>
+            <p>{label}</p>
+          </div>
+        </section>
 
         <div className={styles.footerLock}>
           <SiteFooter siteName={siteName} />

@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation'
 import { cmsIsConfigured, getPublishedProject, mediaData } from '@/lib/cms'
 import { SITE_NAME } from '@/lib/site'
 
-import { ClosingTransition } from '../../_components/ClosingTransition'
+import { PageFooter } from '../../_components/PageFooter'
 import { SiteNavigation } from '../../_components/SiteNavigation'
 
 import { ProjectImageCarousel } from './ProjectImageCarousel'
@@ -321,14 +321,16 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         </article>
       </main>
 
-      <ClosingTransition
-        headingLines={[project.title]}
-        image={{
-          alt: project.closingImage.alt,
-          objectPosition: `${project.closingImage.focalX ?? 50}% ${project.closingImage.focalY ?? 50}%`,
-          src: project.closingImage.url,
+      <PageFooter
+        closing={{
+          headingLines: [project.title],
+          image: {
+            alt: project.closingImage.alt,
+            objectPosition: `${project.closingImage.focalX ?? 50}% ${project.closingImage.focalY ?? 50}%`,
+            src: project.closingImage.url,
+          },
+          label: closingLabel,
         }}
-        label={closingLabel}
         siteName={SITE_NAME}
       />
     </>

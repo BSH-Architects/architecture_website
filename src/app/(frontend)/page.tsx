@@ -1,7 +1,7 @@
 import { cmsIsConfigured, getHomepageContent, mediaData } from '@/lib/cms'
 import { heroPlaceholder, previewHeroImagePath, SITE_NAME } from '@/lib/site'
 
-import { ClosingTransition } from './_components/ClosingTransition'
+import { PageFooter } from './_components/PageFooter'
 import { HeroStudyTwo } from './_components/HeroStudyTwo'
 import { PeopleStudy } from './_components/PeopleStudy'
 import { PositionStudy } from './_components/PositionStudy'
@@ -104,17 +104,17 @@ export default async function HomePage() {
           sectionSummary={people?.sectionSummary}
         />
       </main>
-      <ClosingTransition
-        headingLines={closingHeadingLines?.length ? closingHeadingLines : undefined}
-        image={
-          closingImage?.url
+      <PageFooter
+        closing={{
+          headingLines: closingHeadingLines?.length ? closingHeadingLines : undefined,
+          image: closingImage?.url
             ? {
                 alt: closingImage.alt,
                 src: closingImage.url,
               }
-            : undefined
-        }
-        label={closing?.label?.trim() || undefined}
+            : undefined,
+          label: closing?.label?.trim() || undefined,
+        }}
         siteName={SITE_NAME}
       />
     </>

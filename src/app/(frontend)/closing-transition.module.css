@@ -207,24 +207,3 @@
     transform: none;
   }
 }
-
-
-.projectTransition {
-  z-index: 0;
-  height: 200svh;
-  margin-top: -100svh;
-}
-
-@media (max-width: 47.5rem) {
-  .projectTransition {
-    height: auto;
-    margin-top: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .projectTransition {
-    height: auto;
-    margin-top: 0;
-  }
-}
