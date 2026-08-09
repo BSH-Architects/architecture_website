@@ -658,6 +658,20 @@ export interface Homepage {
     };
   };
   /**
+   * Controls the full-width image and two text values immediately below the People section. The reveal animation and layout remain fixed.
+   */
+  closing: {
+    /**
+     * Landscape or crop-safe architectural imagery works best here.
+     */
+    image: number | Media;
+    /**
+     * Use a line break to control the two-line heading.
+     */
+    heading: string;
+    label: string;
+  };
+  /**
    * The star project shown directly after the hero.
    */
   featuredProject?: (number | null) | Project;
@@ -713,6 +727,13 @@ export interface HomepageSelect<T extends boolean = true> {
               role?: T;
               description?: T;
             };
+      };
+  closing?:
+    | T
+    | {
+        image?: T;
+        heading?: T;
+        label?: T;
       };
   featuredProject?: T;
   projectOrder?: T;

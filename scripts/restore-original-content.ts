@@ -5,7 +5,11 @@ import config from '@payload-config'
 import { getPayload, type Payload, type RequiredDataFromCollectionSlug } from 'payload'
 
 import type { Media, Project } from '../payload-types'
-import { peopleSectionDefaults, positionSectionDefaults } from '../src/content/homepageDefaults'
+import {
+  closingSectionDefaults,
+  peopleSectionDefaults,
+  positionSectionDefaults,
+} from '../src/content/homepageDefaults'
 
 type AssetGroup = NonNullable<Media['assetGroup']>
 
@@ -538,12 +542,14 @@ async function restore() {
     const positionImage = mediaByKey.get('warmInterior')
     const personOneImage = mediaByKey.get('personOne')
     const personTwoImage = mediaByKey.get('personTwo')
+    const closingImage = mediaByKey.get('landscapeResidence')
     const featuredProject = projectsBySlug.get('house-of-stillness')
     if (
       !homepageHero ||
       !positionImage ||
       !personOneImage ||
       !personTwoImage ||
+      !closingImage ||
       !featuredProject
     ) {
       throw new Error('Homepage restoration data is incomplete.')
@@ -581,6 +587,11 @@ async function restore() {
             role: peopleSectionDefaults.personTwo.role,
             description: peopleSectionDefaults.personTwo.description,
           },
+        },
+        closing: {
+          image: closingImage.id,
+          heading: closingSectionDefaults.heading,
+          label: closingSectionDefaults.label,
         },
         featuredProject: featuredProject.id,
         projectOrder: projectDefinitions.map((project) => {

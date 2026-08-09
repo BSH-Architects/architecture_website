@@ -3,6 +3,8 @@
 import Image from 'next/image'
 import { useEffect, useRef } from 'react'
 
+import { closingSectionDefaults } from '@/content/homepageDefaults'
+
 import { SiteFooter } from './SiteFooter'
 
 import styles from '../closing-transition.module.css'
@@ -10,11 +12,11 @@ import styles from '../closing-transition.module.css'
 const FOOTER_START_OFFSET = 0.48
 
 const DEFAULT_IMAGE = {
-  alt: 'Bright contemporary residence framed by white concrete and open sky',
-  src: '/api/media/file/residence-landscape-closing.jpg',
+  alt: closingSectionDefaults.imageAlt,
+  src: closingSectionDefaults.imageSrc,
 }
-const DEFAULT_HEADING_LINES = ['Made to hold the', 'life that follows.']
-const DEFAULT_LABEL = 'Architecture / Interiors / Landscape'
+const DEFAULT_HEADING_LINES = closingSectionDefaults.heading.split('\n')
+const DEFAULT_LABEL = closingSectionDefaults.label
 
 type ClosingImage = {
   alt: string

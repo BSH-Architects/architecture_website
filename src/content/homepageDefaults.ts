@@ -28,3 +28,10 @@ export const peopleSectionDefaults = {
     imageAlt: 'Temporary editorial portrait for the second founder',
   },
 } as const
+
+export const closingSectionDefaults = {
+  heading: 'Made to hold the\nlife that follows.',
+  label: 'Architecture / Interiors / Landscape',
+  imageSrc: '/api/media/file/residence-landscape-closing.jpg',
+  imageAlt: 'Bright contemporary residence framed by white concrete and open sky',
+} as const

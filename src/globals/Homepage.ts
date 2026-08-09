@@ -1,7 +1,11 @@
 import type { GlobalConfig } from 'payload'
 
 import { authenticated } from '../access'
-import { peopleSectionDefaults, positionSectionDefaults } from '../content/homepageDefaults'
+import {
+  closingSectionDefaults,
+  peopleSectionDefaults,
+  positionSectionDefaults,
+} from '../content/homepageDefaults'
 
 export const Homepage: GlobalConfig = {
   slug: 'homepage',
@@ -192,6 +196,43 @@ export const Homepage: GlobalConfig = {
               admin: { rows: 2 },
             },
           ],
+        },
+      ],
+    },
+    {
+      name: 'closing',
+      type: 'group',
+      label: 'Closing section',
+      admin: {
+        description:
+          'Controls the full-width image and two text values immediately below the People section. The reveal animation and layout remain fixed.',
+      },
+      fields: [
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+          admin: {
+            description: 'Landscape or crop-safe architectural imagery works best here.',
+          },
+        },
+        {
+          name: 'heading',
+          type: 'textarea',
+          required: true,
+          defaultValue: closingSectionDefaults.heading,
+          admin: {
+            description: 'Use a line break to control the two-line heading.',
+            rows: 2,
+          },
+        },
+        {
+          name: 'label',
+          type: 'text',
+          required: true,
+          defaultValue: closingSectionDefaults.label,
+          label: 'Category label',
         },
       ],
     },

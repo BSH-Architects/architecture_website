@@ -34,7 +34,13 @@ try {
   const personTwoImageID = relationshipID(homepage.people.personTwo.image)
   const personOneImageURL = mediaURL(homepage.people.personOne.image)
   const personTwoImageURL = mediaURL(homepage.people.personTwo.image)
-  const headingLines = homepage.position.heading
+  const closingImageID = relationshipID(homepage.closing.image)
+  const closingImageURL = mediaURL(homepage.closing.image)
+  const positionHeadingLines = homepage.position.heading
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+  const closingHeadingLines = homepage.closing.heading
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean)
@@ -43,7 +49,7 @@ try {
     !positionImageID && 'Position image is missing.',
     heroImageID === positionImageID && 'Position image must be independent from the hero image.',
     !positionImageURL && 'Position image does not have a public URL.',
-    headingLines.length < 1 && 'Position heading is empty.',
+    positionHeadingLines.length < 1 && 'Position heading is empty.',
     !nonEmpty(homepage.position.descriptionPrimary) && 'Position first paragraph is empty.',
     !nonEmpty(homepage.position.descriptionSecondary) && 'Position second paragraph is empty.',
     !nonEmpty(homepage.people.sectionLabel) && 'People section label is empty.',
@@ -60,12 +66,22 @@ try {
     !nonEmpty(homepage.people.personTwo.name) && 'Second person name is empty.',
     !nonEmpty(homepage.people.personTwo.role) && 'Second person role is empty.',
     !nonEmpty(homepage.people.personTwo.description) && 'Second person description is empty.',
+    !closingImageID && 'Closing image is missing.',
+    !closingImageURL && 'Closing image does not have a public URL.',
+    closingHeadingLines.length < 1 && 'Closing heading is empty.',
+    !nonEmpty(homepage.closing.label) && 'Closing category label is empty.',
   ].filter((failure): failure is string => Boolean(failure))
 
   console.log(
     JSON.stringify(
       {
         heroImageID,
+        closing: {
+          headingLines: closingHeadingLines.length,
+          imageID: closingImageID,
+          imageURL: closingImageURL,
+          label: nonEmpty(homepage.closing.label),
+        },
         people: {
           description: nonEmpty(homepage.people.description),
           heading: nonEmpty(homepage.people.heading),
@@ -89,7 +105,7 @@ try {
         position: {
           descriptionPrimary: nonEmpty(homepage.position.descriptionPrimary),
           descriptionSecondary: nonEmpty(homepage.position.descriptionSecondary),
-          headingLines: headingLines.length,
+          headingLines: positionHeadingLines.length,
           imageID: positionImageID,
           imageIndependent: heroImageID !== positionImageID,
           imageURL: positionImageURL,

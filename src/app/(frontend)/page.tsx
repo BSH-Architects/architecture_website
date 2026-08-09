@@ -35,6 +35,12 @@ export default async function HomePage() {
   const people = content?.homepage.people
   const personOneImage = mediaData(people?.personOne?.image)
   const personTwoImage = mediaData(people?.personTwo?.image)
+  const closing = content?.homepage.closing
+  const closingImage = mediaData(closing?.image)
+  const closingHeadingLines = closing?.heading
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
   const previewImageSrc = content ? null : previewHeroImagePath()
   const heroSummary = hero?.summary || heroPlaceholder.summary
   const heroTarget = POSITION_ANCHOR
@@ -88,7 +94,19 @@ export default async function HomePage() {
           sectionSummary={people?.sectionSummary}
         />
       </main>
-      <ClosingTransition siteName={SITE_NAME} />
+      <ClosingTransition
+        headingLines={closingHeadingLines?.length ? closingHeadingLines : undefined}
+        image={
+          closingImage?.url
+            ? {
+                alt: closingImage.alt,
+                src: closingImage.url,
+              }
+            : undefined
+        }
+        label={closing?.label?.trim() || undefined}
+        siteName={SITE_NAME}
+      />
     </>
   )
 }
