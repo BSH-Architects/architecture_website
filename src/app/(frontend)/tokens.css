@@ -96,6 +96,7 @@
   --focus-width: 2px;
   --focus-offset: 4px;
   --touch-target: 2.75rem;
+  --site-header-height: 4.5rem;
 
   /* Motion ---------------------------------------------------------------- */
   --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
@@ -108,5 +109,6 @@
     --grid-gap: 0.5625rem;
     --pad: 1.125rem;
     --page-grid-pad: max(var(--pad), calc((100vw + var(--grid-gap)) / 8));
+    --site-header-height: 4rem;
   }
 }

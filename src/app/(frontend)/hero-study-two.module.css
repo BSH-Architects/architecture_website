@@ -3,7 +3,7 @@
   display: grid;
   min-height: 100svh;
   grid-template-rows: auto 1fr auto;
-  padding: var(--space-5) var(--page-grid-pad) clamp(var(--space-6), 3vh, var(--space-10));
+  padding: calc(var(--site-header-height) + var(--space-3)) var(--page-grid-pad) clamp(var(--space-6), 3vh, var(--space-10));
   overflow: hidden;
   isolation: isolate;
   background: var(--charcoal);
@@ -216,7 +216,7 @@
 
 @media (max-width: 47.5rem) {
   .hero {
-    padding: var(--space-4) var(--page-grid-pad) max(var(--space-6), env(safe-area-inset-bottom));
+    padding: calc(var(--site-header-height) + var(--space-3)) var(--page-grid-pad) max(var(--space-6), env(safe-area-inset-bottom));
   }
 
   .topRail { font-size: var(--font-size-datum); }

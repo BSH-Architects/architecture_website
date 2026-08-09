@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
+import { SITE_NAME } from '@/lib/site'
+
+import { SiteHeader } from './_components/SiteHeader'
 import { displayFont, monoFont, textFont } from './fonts'
 
 import './tokens.css'
@@ -20,7 +23,10 @@ export default function FrontendLayout({ children }: { children: ReactNode }) {
       className={`${displayFont.variable} ${textFont.variable} ${monoFont.variable}`}
       lang="en"
     >
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        <SiteHeader siteName={SITE_NAME} />
+        {children}
+      </body>
     </html>
   )
 }

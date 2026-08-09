@@ -21,6 +21,8 @@ a:focus-visible {
 
 .site-shell { min-height: 100svh; }
 
+.site-shell:focus { outline: none; }
+
 .content-preview { border-bottom: var(--border-width) solid var(--color-line); }
 
 .content-preview__inner {

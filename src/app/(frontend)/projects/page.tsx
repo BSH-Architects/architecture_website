@@ -8,7 +8,6 @@ import {
   ProjectScrollArchive,
   type ArchiveProject,
 } from '../_components/ProjectScrollArchive'
-import { SiteNavigation } from '../_components/SiteNavigation'
 
 import styles from './projects-page.module.css'
 
@@ -59,9 +58,7 @@ export default async function ProjectsPage() {
 
   return (
     <>
-      <main className={`site-shell ${styles.page}`} id="top">
-        <SiteNavigation activePage="projects" />
-
+      <main className={`site-shell ${styles.page}`} id="top" tabIndex={-1}>
         <header className={styles.intro}>
           <p className={styles.eyebrow}>Project archive / {archiveRange}</p>
           <h1>Our Work</h1>

@@ -6,7 +6,6 @@ import { cmsIsConfigured, getPublishedProject, mediaData } from '@/lib/cms'
 import { SITE_NAME } from '@/lib/site'
 
 import { PageFooter } from '../../_components/PageFooter'
-import { SiteNavigation } from '../../_components/SiteNavigation'
 
 import { ProjectImageCarousel } from './ProjectImageCarousel'
 import styles from './project-detail.module.css'
@@ -256,9 +255,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
-      <main className={`site-shell ${styles.page}`} id="top">
-        <SiteNavigation activePage="projects" />
-
+      <main className={`site-shell ${styles.page}`} id="top" tabIndex={-1}>
         <article className={styles.article}>
           <header className={styles.header}>
             <Link className={styles.archiveLink} href="/projects">

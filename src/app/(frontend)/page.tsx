@@ -7,7 +7,6 @@ import { PeopleStudy } from './_components/PeopleStudy'
 import { PositionStudy } from './_components/PositionStudy'
 import { PracticeStudy } from './_components/PracticeStudy'
 import { ProjectFieldStudy } from './_components/ProjectFieldStudy'
-import { SiteNavigation } from './_components/SiteNavigation'
 
 export const dynamic = 'force-dynamic'
 
@@ -49,9 +48,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <main className="site-shell" id="top">
-        <SiteNavigation activePage="home" />
-
+      <main className="site-shell" id="top" tabIndex={-1}>
         <HeroStudyTwo
           brand={hero?.title || SITE_NAME}
           eyebrow={hero?.eyebrow || heroPlaceholder.eyebrow}
@@ -124,7 +121,7 @@ export default async function HomePage() {
 /** Production never invents portfolio content. */
 function UnavailableState({ configured }: { configured: boolean }) {
   return (
-    <main className="site-shell">
+    <main className="site-shell" id="top" tabIndex={-1}>
       <section className="content-preview setup-state">
         <div className="content-preview__inner">
           <p className="utility-label">
