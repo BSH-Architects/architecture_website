@@ -32,6 +32,8 @@ export default async function HomePage() {
   const heroImage = mediaData(hero?.image, 'wide')
   const position = content?.homepage.position
   const positionImage = mediaData(position?.image, 'wide') ?? heroImage
+  const practice = content?.homepage.practice
+  const practiceImage = mediaData(practice?.image)
   const people = content?.homepage.people
   const personOneImage = mediaData(people?.personOne?.image)
   const personTwoImage = mediaData(people?.personTwo?.image)
@@ -74,7 +76,15 @@ export default async function HomePage() {
           />
         )}
 
-        <PracticeStudy />
+        <PracticeStudy
+          descriptionPrimary={practice?.descriptionPrimary}
+          descriptionSecondary={practice?.descriptionSecondary}
+          disciplines={practice?.disciplines}
+          headingLineOne={practice?.headingLineOne}
+          headingLineTwoEmphasis={practice?.headingLineTwoEmphasis}
+          headingLineTwoPrefix={practice?.headingLineTwoPrefix}
+          image={practiceImage}
+        />
         <PeopleStudy
           description={people?.description}
           heading={people?.heading}

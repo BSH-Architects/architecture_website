@@ -9,6 +9,7 @@ import {
   closingSectionDefaults,
   peopleSectionDefaults,
   positionSectionDefaults,
+  practiceSectionDefaults,
 } from '../src/content/homepageDefaults'
 
 type AssetGroup = NonNullable<Media['assetGroup']>
@@ -540,6 +541,7 @@ async function restore() {
 
     const homepageHero = mediaByKey.get('homepageHero')
     const positionImage = mediaByKey.get('warmInterior')
+    const practiceImage = mediaByKey.get('practiceModel')
     const personOneImage = mediaByKey.get('personOne')
     const personTwoImage = mediaByKey.get('personTwo')
     const closingImage = mediaByKey.get('landscapeResidence')
@@ -547,6 +549,7 @@ async function restore() {
     if (
       !homepageHero ||
       !positionImage ||
+      !practiceImage ||
       !personOneImage ||
       !personTwoImage ||
       !closingImage ||
@@ -569,6 +572,19 @@ async function restore() {
           heading: positionSectionDefaults.heading,
           descriptionPrimary: positionSectionDefaults.descriptionPrimary,
           descriptionSecondary: positionSectionDefaults.descriptionSecondary,
+        },
+        practice: {
+          image: practiceImage.id,
+          headingLineOne: practiceSectionDefaults.headingLineOne,
+          headingLineTwoPrefix: practiceSectionDefaults.headingLineTwoPrefix,
+          headingLineTwoEmphasis: practiceSectionDefaults.headingLineTwoEmphasis,
+          descriptionPrimary: practiceSectionDefaults.descriptionPrimary,
+          descriptionSecondary: practiceSectionDefaults.descriptionSecondary,
+          disciplines: practiceSectionDefaults.disciplines.map((discipline) => ({
+            title: discipline.title,
+            descriptionPrimary: discipline.descriptionPrimary,
+            descriptionSecondary: discipline.descriptionSecondary,
+          })),
         },
         people: {
           sectionLabel: peopleSectionDefaults.sectionLabel,

@@ -5,6 +5,7 @@ import {
   closingSectionDefaults,
   peopleSectionDefaults,
   positionSectionDefaults,
+  practiceSectionDefaults,
 } from '../content/homepageDefaults'
 
 export const Homepage: GlobalConfig = {
@@ -79,6 +80,110 @@ export const Homepage: GlobalConfig = {
           label: 'Description — second paragraph',
           defaultValue: positionSectionDefaults.descriptionSecondary,
           admin: { rows: 4 },
+        },
+      ],
+    },
+    {
+      name: 'practice',
+      type: 'group',
+      label: 'Practice section — Architecture is a frame',
+      admin: {
+        description:
+          'Controls the background, statement, and four discipline panels. The composition, numbering, emphasis, and panel count remain fixed.',
+      },
+      fields: [
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+          admin: {
+            description: 'Landscape or crop-safe architectural imagery works best here.',
+          },
+        },
+        {
+          name: 'headingLineOne',
+          type: 'text',
+          required: true,
+          maxLength: 60,
+          label: 'Heading — first line',
+          defaultValue: practiceSectionDefaults.headingLineOne,
+        },
+        {
+          name: 'headingLineTwoPrefix',
+          type: 'text',
+          required: true,
+          maxLength: 20,
+          label: 'Heading — second-line prefix',
+          defaultValue: practiceSectionDefaults.headingLineTwoPrefix,
+        },
+        {
+          name: 'headingLineTwoEmphasis',
+          type: 'text',
+          required: true,
+          maxLength: 50,
+          label: 'Heading — emphasized phrase',
+          defaultValue: practiceSectionDefaults.headingLineTwoEmphasis,
+        },
+        {
+          name: 'descriptionPrimary',
+          type: 'textarea',
+          required: true,
+          maxLength: 180,
+          label: 'Manifesto — first paragraph',
+          defaultValue: practiceSectionDefaults.descriptionPrimary,
+          admin: { rows: 3 },
+        },
+        {
+          name: 'descriptionSecondary',
+          type: 'textarea',
+          required: true,
+          maxLength: 180,
+          label: 'Manifesto — second paragraph',
+          defaultValue: practiceSectionDefaults.descriptionSecondary,
+          admin: { rows: 3 },
+        },
+        {
+          name: 'disciplines',
+          type: 'array',
+          required: true,
+          minRows: 4,
+          maxRows: 4,
+          labels: { plural: 'Disciplines', singular: 'Discipline' },
+          defaultValue: practiceSectionDefaults.disciplines.map((discipline) => ({
+            title: discipline.title,
+            descriptionPrimary: discipline.descriptionPrimary,
+            descriptionSecondary: discipline.descriptionSecondary,
+          })),
+          admin: {
+            description:
+              'Exactly four panels are required. Drag to reorder them; the visible 01–04 numbers follow this order.',
+            initCollapsed: true,
+          },
+          fields: [
+            {
+              name: 'title',
+              type: 'text',
+              required: true,
+              maxLength: 50,
+            },
+            {
+              name: 'descriptionPrimary',
+              type: 'textarea',
+              required: true,
+              maxLength: 180,
+              label: 'First paragraph',
+              admin: { rows: 3 },
+            },
+            {
+              name: 'descriptionSecondary',
+              type: 'textarea',
+              required: true,
+              maxLength: 180,
+              label: 'Second paragraph',
+              admin: { rows: 3 },
+            },
+          ],
         },
       ],
     },

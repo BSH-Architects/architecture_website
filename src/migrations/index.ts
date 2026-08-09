@@ -2,6 +2,7 @@ import * as migration_20260808_180411_initial_cms_schema from './20260808_180411
 import * as migration_20260808_195437_homepage_position_section from './20260808_195437_homepage_position_section';
 import * as migration_20260809_083310_homepage_people_section from './20260809_083310_homepage_people_section';
 import * as migration_20260809_093856_homepage_closing_section from './20260809_093856_homepage_closing_section';
+import * as migration_20260809_095530_homepage_practice_section from './20260809_095530_homepage_practice_section';
 
 export const migrations = [
   {
@@ -22,6 +23,11 @@ export const migrations = [
   {
     up: migration_20260809_093856_homepage_closing_section.up,
     down: migration_20260809_093856_homepage_closing_section.down,
-    name: '20260809_093856_homepage_closing_section'
+    name: '20260809_093856_homepage_closing_section',
+  },
+  {
+    up: migration_20260809_095530_homepage_practice_section.up,
+    down: migration_20260809_095530_homepage_practice_section.down,
+    name: '20260809_095530_homepage_practice_section'
   },
 ];

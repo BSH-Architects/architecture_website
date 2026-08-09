@@ -30,6 +30,15 @@ try {
   const heroImageID = relationshipID(homepage.hero.image)
   const positionImageID = relationshipID(homepage.position.image)
   const positionImageURL = mediaURL(homepage.position.image)
+  const practiceImageID = relationshipID(homepage.practice.image)
+  const practiceImageURL = mediaURL(homepage.practice.image)
+  const practiceDisciplines = homepage.practice.disciplines ?? []
+  const practiceDisciplinesComplete = practiceDisciplines.every(
+    (discipline) =>
+      nonEmpty(discipline.title) &&
+      nonEmpty(discipline.descriptionPrimary) &&
+      nonEmpty(discipline.descriptionSecondary),
+  )
   const personOneImageID = relationshipID(homepage.people.personOne.image)
   const personTwoImageID = relationshipID(homepage.people.personTwo.image)
   const personOneImageURL = mediaURL(homepage.people.personOne.image)
@@ -52,6 +61,19 @@ try {
     positionHeadingLines.length < 1 && 'Position heading is empty.',
     !nonEmpty(homepage.position.descriptionPrimary) && 'Position first paragraph is empty.',
     !nonEmpty(homepage.position.descriptionSecondary) && 'Position second paragraph is empty.',
+    !practiceImageID && 'Practice image is missing.',
+    !practiceImageURL && 'Practice image does not have a public URL.',
+    !nonEmpty(homepage.practice.headingLineOne) && 'Practice first heading line is empty.',
+    !nonEmpty(homepage.practice.headingLineTwoPrefix) &&
+      'Practice second-line prefix is empty.',
+    !nonEmpty(homepage.practice.headingLineTwoEmphasis) &&
+      'Practice emphasized heading phrase is empty.',
+    !nonEmpty(homepage.practice.descriptionPrimary) &&
+      'Practice first manifesto paragraph is empty.',
+    !nonEmpty(homepage.practice.descriptionSecondary) &&
+      'Practice second manifesto paragraph is empty.',
+    practiceDisciplines.length !== 4 && 'Practice must contain exactly four disciplines.',
+    !practiceDisciplinesComplete && 'One or more Practice disciplines are incomplete.',
     !nonEmpty(homepage.people.sectionLabel) && 'People section label is empty.',
     !nonEmpty(homepage.people.sectionSummary) && 'People section summary is empty.',
     !nonEmpty(homepage.people.heading) && 'People heading is empty.',
@@ -81,6 +103,17 @@ try {
           imageID: closingImageID,
           imageURL: closingImageURL,
           label: nonEmpty(homepage.closing.label),
+        },
+        practice: {
+          descriptionPrimary: nonEmpty(homepage.practice.descriptionPrimary),
+          descriptionSecondary: nonEmpty(homepage.practice.descriptionSecondary),
+          disciplineCount: practiceDisciplines.length,
+          disciplinesComplete: practiceDisciplinesComplete,
+          headingLineOne: nonEmpty(homepage.practice.headingLineOne),
+          headingLineTwoEmphasis: nonEmpty(homepage.practice.headingLineTwoEmphasis),
+          headingLineTwoPrefix: nonEmpty(homepage.practice.headingLineTwoPrefix),
+          imageID: practiceImageID,
+          imageURL: practiceImageURL,
         },
         people: {
           description: nonEmpty(homepage.people.description),

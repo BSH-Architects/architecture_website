@@ -625,6 +625,29 @@ export interface Homepage {
     descriptionSecondary: string;
   };
   /**
+   * Controls the background, statement, and four discipline panels. The composition, numbering, emphasis, and panel count remain fixed.
+   */
+  practice: {
+    /**
+     * Landscape or crop-safe architectural imagery works best here.
+     */
+    image: number | Media;
+    headingLineOne: string;
+    headingLineTwoPrefix: string;
+    headingLineTwoEmphasis: string;
+    descriptionPrimary: string;
+    descriptionSecondary: string;
+    /**
+     * Exactly four panels are required. Drag to reorder them; the visible 01–04 numbers follow this order.
+     */
+    disciplines: {
+      title: string;
+      descriptionPrimary: string;
+      descriptionSecondary: string;
+      id?: string | null;
+    }[];
+  };
+  /**
    * Controls every line of copy and both portraits in the homepage People section. The two-person layout remains fixed.
    */
   people: {
@@ -703,6 +726,24 @@ export interface HomepageSelect<T extends boolean = true> {
         heading?: T;
         descriptionPrimary?: T;
         descriptionSecondary?: T;
+      };
+  practice?:
+    | T
+    | {
+        image?: T;
+        headingLineOne?: T;
+        headingLineTwoPrefix?: T;
+        headingLineTwoEmphasis?: T;
+        descriptionPrimary?: T;
+        descriptionSecondary?: T;
+        disciplines?:
+          | T
+          | {
+              title?: T;
+              descriptionPrimary?: T;
+              descriptionSecondary?: T;
+              id?: T;
+            };
       };
   people?:
     | T

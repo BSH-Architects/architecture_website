@@ -35,3 +35,35 @@ export const closingSectionDefaults = {
   imageSrc: '/api/media/file/residence-landscape-closing.jpg',
   imageAlt: 'Bright contemporary residence framed by white concrete and open sky',
 } as const
+
+
+export const practiceSectionDefaults = {
+  imageSrc: '/api/media/file/practice-model.webp',
+  headingLineOne: 'Architecture is a frame',
+  headingLineTwoPrefix: 'for',
+  headingLineTwoEmphasis: 'ordinary life.',
+  descriptionPrimary: 'A connected practice across buildings, interiors, and landscapes.',
+  descriptionSecondary: 'Each is shaped around how places are actually lived in.',
+  disciplines: [
+    {
+      title: 'Residential',
+      descriptionPrimary: 'Homes shaped around climate and daily routine.',
+      descriptionSecondary: 'Designed to support long-term change.',
+    },
+    {
+      title: 'Hospitality',
+      descriptionPrimary: 'Sequence and material establish the atmosphere.',
+      descriptionSecondary: 'Light carries the experience through each space.',
+    },
+    {
+      title: 'Interiors',
+      descriptionPrimary: 'Interior architecture begins with structure and proportion.',
+      descriptionSecondary: 'Detail and everyday use are resolved together.',
+    },
+    {
+      title: 'Landscape',
+      descriptionPrimary: 'Built and natural systems are developed together.',
+      descriptionSecondary: 'One continuous condition extends across the site.',
+    },
+  ],
+} as const
