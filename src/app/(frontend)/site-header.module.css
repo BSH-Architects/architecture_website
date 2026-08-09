@@ -109,6 +109,10 @@
   text-transform: uppercase;
 }
 
+.identityShort {
+  display: none;
+}
+
 .disciplines,
 .navigation {
   font-family: var(--font-family-mono);
@@ -219,9 +223,17 @@
     display: none;
   }
 
+  .identityLong {
+    display: none;
+  }
+
+  .identityShort {
+    display: inline;
+  }
+
   .navigation {
     grid-column: 2 / -1;
-    gap: var(--space-3);
+    gap: var(--space-2);
   }
 
   .navigation a {

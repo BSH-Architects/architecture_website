@@ -15,7 +15,6 @@ export const SITE_DATUM = 'Est. 2014 — Practice of architecture'
 
 /** Placeholder hero content, used in development only. Not client copy. */
 export const heroPlaceholder = {
-  eyebrow: 'Architecture / Interiors / Urban',
   summary:
     'Rooms shaped by daylight, honest materials, and plans made to endure.',
   title: 'Built with intent.',

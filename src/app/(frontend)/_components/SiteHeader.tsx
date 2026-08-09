@@ -50,20 +50,20 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
 
     const hero = document.getElementById('hero-study-02')
     if (!hero) {
-      const frame = window.requestAnimationFrame(() => setHomeHeroRevealed(true))
-      return () => window.cancelAnimationFrame(frame)
+      const fallbackFrame = window.requestAnimationFrame(() => setHomeHeroRevealed(true))
+      return () => window.cancelAnimationFrame(fallbackFrame)
     }
 
     const revealWithHeroContent = () => {
       if (hero.dataset.phase === 'content') setHomeHeroRevealed(true)
     }
 
-    const frame = window.requestAnimationFrame(revealWithHeroContent)
+    const observerFrame = window.requestAnimationFrame(revealWithHeroContent)
     const observer = new MutationObserver(revealWithHeroContent)
     observer.observe(hero, { attributeFilter: ['data-phase'], attributes: true })
 
     return () => {
-      window.cancelAnimationFrame(frame)
+      window.cancelAnimationFrame(observerFrame)
       observer.disconnect()
     }
   }, [pathname])
@@ -134,7 +134,6 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
       </a>
 
       <header
-        aria-hidden={homeHeroPending || undefined}
         className={headerClassName}
         inert={homeHeroPending || undefined}
         ref={headerRef}
@@ -146,7 +145,10 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
             className={styles.identity}
             href="/"
           >
-            {siteName}
+            <span className={styles.identityLong}>{siteName}</span>
+            <span aria-hidden="true" className={styles.identityShort}>
+              {siteName.slice(0, 1)}
+            </span>
           </Link>
 
           <p className={styles.disciplines}>Architecture / Interiors / Landscape</p>
