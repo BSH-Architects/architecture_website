@@ -101,6 +101,7 @@
   /* Motion ---------------------------------------------------------------- */
   --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
   --duration-reveal: 1150ms;
+  --delay-hero-rail: 820ms;
 }
 
 @media (max-width: 47.5rem) {

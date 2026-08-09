@@ -51,7 +51,6 @@ export default async function HomePage() {
       <main className="site-shell" id="top" tabIndex={-1}>
         <HeroStudyTwo
           brand={hero?.title || SITE_NAME}
-          eyebrow={hero?.eyebrow || heroPlaceholder.eyebrow}
           image={heroImage}
           indexHref={heroTarget}
           previewImageSrc={previewImageSrc}

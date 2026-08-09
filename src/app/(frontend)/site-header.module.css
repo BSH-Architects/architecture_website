@@ -22,18 +22,22 @@
 }
 
 .header {
+  --header-entrance-delay: 0ms;
   --header-scroll-progress: 0;
   position: fixed;
   z-index: 100;
   inset: 0 0 auto;
   min-height: var(--site-header-height);
   color: var(--ink);
+  opacity: 1;
   transform: translate3d(0, 0, 0);
   transition:
     color 240ms ease-out,
     background-color 240ms ease-out,
+    opacity 600ms ease-out var(--header-entrance-delay),
     transform 480ms var(--ease-reveal);
-  will-change: transform;
+  visibility: visible;
+  will-change: transform, opacity;
 }
 
 .header::after {
@@ -66,6 +70,17 @@
 
 .hidden {
   transform: translate3d(0, calc(-100% - var(--border-width)), 0);
+}
+
+.waitsForHero {
+  --header-entrance-delay: var(--delay-hero-rail);
+}
+
+.heroPending {
+  --header-entrance-delay: 0ms;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
 }
 
 .header:focus-within {
@@ -231,6 +246,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .waitsForHero {
+    --header-entrance-delay: 0ms;
+  }
+
   .header,
   .header::after,
   .navigation a::after,

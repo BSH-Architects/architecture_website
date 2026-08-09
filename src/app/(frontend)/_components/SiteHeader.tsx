@@ -15,6 +15,10 @@ type ScrollState = {
   scrolled: boolean
 }
 
+type RouteSiteHeaderProps = SiteHeaderProps & {
+  pathname: string
+}
+
 const navItems = [
   { href: '/projects', label: 'Work', section: 'projects' },
   { href: '/#practice-study', label: 'Practice', section: 'practice' },
@@ -23,6 +27,11 @@ const navItems = [
 
 export function SiteHeader({ siteName }: SiteHeaderProps) {
   const pathname = usePathname()
+
+  return <RouteSiteHeader key={pathname} pathname={pathname} siteName={siteName} />
+}
+
+function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
   const headerRef = useRef<HTMLElement>(null)
   const previousScrollY = useRef(0)
   const frame = useRef<number | null>(null)
@@ -30,9 +39,34 @@ export function SiteHeader({ siteName }: SiteHeaderProps) {
     hidden: false,
     scrolled: false,
   })
+  const [homeHeroRevealed, setHomeHeroRevealed] = useState(pathname !== '/')
 
   const projectsActive = pathname.startsWith('/projects')
   const opensOnDark = pathname === '/' || pathname === '/projects'
+  const homeHeroPending = pathname === '/' && !homeHeroRevealed
+
+  useEffect(() => {
+    if (pathname !== '/') return
+
+    const hero = document.getElementById('hero-study-02')
+    if (!hero) {
+      const frame = window.requestAnimationFrame(() => setHomeHeroRevealed(true))
+      return () => window.cancelAnimationFrame(frame)
+    }
+
+    const revealWithHeroContent = () => {
+      if (hero.dataset.phase === 'content') setHomeHeroRevealed(true)
+    }
+
+    const frame = window.requestAnimationFrame(revealWithHeroContent)
+    const observer = new MutationObserver(revealWithHeroContent)
+    observer.observe(hero, { attributeFilter: ['data-phase'], attributes: true })
+
+    return () => {
+      window.cancelAnimationFrame(frame)
+      observer.disconnect()
+    }
+  }, [pathname])
 
   useEffect(() => {
     const update = () => {
@@ -85,6 +119,8 @@ export function SiteHeader({ siteName }: SiteHeaderProps) {
   const headerClassName = [
     styles.header,
     opensOnDark ? styles.opensOnDark : styles.opensOnLight,
+    pathname === '/' ? styles.waitsForHero : '',
+    homeHeroPending ? styles.heroPending : '',
     scrollState.scrolled ? styles.scrolled : '',
     scrollState.hidden ? styles.hidden : '',
   ]
@@ -97,7 +133,12 @@ export function SiteHeader({ siteName }: SiteHeaderProps) {
         Skip to content
       </a>
 
-      <header className={headerClassName} ref={headerRef}>
+      <header
+        aria-hidden={homeHeroPending || undefined}
+        className={headerClassName}
+        inert={homeHeroPending || undefined}
+        ref={headerRef}
+      >
         <div className={styles.inner}>
           <Link
             aria-current={pathname === '/' ? 'page' : undefined}

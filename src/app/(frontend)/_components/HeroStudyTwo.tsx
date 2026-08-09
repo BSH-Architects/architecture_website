@@ -10,7 +10,6 @@ import styles from '../hero-study-two.module.css'
 
 type HeroStudyTwoProps = {
   brand: string
-  eyebrow?: string | null
   image: MediaReference | null
   indexHref: string
   previewImageSrc?: string | null
@@ -30,7 +29,6 @@ function focalPosition(image: MediaReference | null) {
 
 export function HeroStudyTwo({
   brand,
-  eyebrow,
   image,
   indexHref,
   previewImageSrc,
@@ -84,10 +82,6 @@ export function HeroStudyTwo({
       </div>
 
       <div aria-hidden="true" className={styles.rules} />
-
-      <header className={styles.topRail}>
-        <span>{eyebrow || 'Architecture / Interiors / Urban'}</span>
-      </header>
 
       <div className={styles.nameMask}>
         <h1 aria-label={brand} className={styles.name} id="hero-study-two-name">
