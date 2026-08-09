@@ -5,7 +5,7 @@ import config from '@payload-config'
 import { getPayload, type Payload, type RequiredDataFromCollectionSlug } from 'payload'
 
 import type { Media, Project } from '../payload-types'
-import { positionSectionDefaults } from '../src/content/homepageDefaults'
+import { peopleSectionDefaults, positionSectionDefaults } from '../src/content/homepageDefaults'
 
 type AssetGroup = NonNullable<Media['assetGroup']>
 
@@ -536,8 +536,16 @@ async function restore() {
 
     const homepageHero = mediaByKey.get('homepageHero')
     const positionImage = mediaByKey.get('warmInterior')
+    const personOneImage = mediaByKey.get('personOne')
+    const personTwoImage = mediaByKey.get('personTwo')
     const featuredProject = projectsBySlug.get('house-of-stillness')
-    if (!homepageHero || !positionImage || !featuredProject) {
+    if (
+      !homepageHero ||
+      !positionImage ||
+      !personOneImage ||
+      !personTwoImage ||
+      !featuredProject
+    ) {
       throw new Error('Homepage restoration data is incomplete.')
     }
 
@@ -555,6 +563,24 @@ async function restore() {
           heading: positionSectionDefaults.heading,
           descriptionPrimary: positionSectionDefaults.descriptionPrimary,
           descriptionSecondary: positionSectionDefaults.descriptionSecondary,
+        },
+        people: {
+          sectionLabel: peopleSectionDefaults.sectionLabel,
+          sectionSummary: peopleSectionDefaults.sectionSummary,
+          heading: peopleSectionDefaults.heading,
+          description: peopleSectionDefaults.description,
+          personOne: {
+            image: personOneImage.id,
+            name: peopleSectionDefaults.personOne.name,
+            role: peopleSectionDefaults.personOne.role,
+            description: peopleSectionDefaults.personOne.description,
+          },
+          personTwo: {
+            image: personTwoImage.id,
+            name: peopleSectionDefaults.personTwo.name,
+            role: peopleSectionDefaults.personTwo.role,
+            description: peopleSectionDefaults.personTwo.description,
+          },
         },
         featuredProject: featuredProject.id,
         projectOrder: projectDefinitions.map((project) => {

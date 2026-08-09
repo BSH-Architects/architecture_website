@@ -32,6 +32,9 @@ export default async function HomePage() {
   const heroImage = mediaData(hero?.image, 'wide')
   const position = content?.homepage.position
   const positionImage = mediaData(position?.image, 'wide') ?? heroImage
+  const people = content?.homepage.people
+  const personOneImage = mediaData(people?.personOne?.image)
+  const personTwoImage = mediaData(people?.personTwo?.image)
   const previewImageSrc = content ? null : previewHeroImagePath()
   const heroSummary = hero?.summary || heroPlaceholder.summary
   const heroTarget = POSITION_ANCHOR
@@ -66,7 +69,24 @@ export default async function HomePage() {
         )}
 
         <PracticeStudy />
-        <PeopleStudy />
+        <PeopleStudy
+          description={people?.description}
+          heading={people?.heading}
+          personOne={{
+            description: people?.personOne?.description,
+            image: personOneImage,
+            name: people?.personOne?.name,
+            role: people?.personOne?.role,
+          }}
+          personTwo={{
+            description: people?.personTwo?.description,
+            image: personTwoImage,
+            name: people?.personTwo?.name,
+            role: people?.personTwo?.role,
+          }}
+          sectionLabel={people?.sectionLabel}
+          sectionSummary={people?.sectionSummary}
+        />
       </main>
       <ClosingTransition siteName={SITE_NAME} />
     </>

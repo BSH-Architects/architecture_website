@@ -625,6 +625,39 @@ export interface Homepage {
     descriptionSecondary: string;
   };
   /**
+   * Controls every line of copy and both portraits in the homepage People section. The two-person layout remains fixed.
+   */
+  people: {
+    sectionLabel: string;
+    sectionSummary: string;
+    heading: string;
+    description: string;
+    /**
+     * Appears as the lower portrait on the left at desktop widths.
+     */
+    personOne: {
+      /**
+       * Use a portrait-oriented or crop-safe image.
+       */
+      image: number | Media;
+      name: string;
+      role: string;
+      description: string;
+    };
+    /**
+     * Appears as the upper portrait on the right at desktop widths.
+     */
+    personTwo: {
+      /**
+       * Use a portrait-oriented or crop-safe image.
+       */
+      image: number | Media;
+      name: string;
+      role: string;
+      description: string;
+    };
+  };
+  /**
    * The star project shown directly after the hero.
    */
   featuredProject?: (number | null) | Project;
@@ -656,6 +689,30 @@ export interface HomepageSelect<T extends boolean = true> {
         heading?: T;
         descriptionPrimary?: T;
         descriptionSecondary?: T;
+      };
+  people?:
+    | T
+    | {
+        sectionLabel?: T;
+        sectionSummary?: T;
+        heading?: T;
+        description?: T;
+        personOne?:
+          | T
+          | {
+              image?: T;
+              name?: T;
+              role?: T;
+              description?: T;
+            };
+        personTwo?:
+          | T
+          | {
+              image?: T;
+              name?: T;
+              role?: T;
+              description?: T;
+            };
       };
   featuredProject?: T;
   projectOrder?: T;
