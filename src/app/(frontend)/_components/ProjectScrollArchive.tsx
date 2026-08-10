@@ -173,11 +173,16 @@ export function ProjectScrollArchive({ projects }: { projects: ArchiveProject[] 
       if (!animationFrame) animationFrame = window.requestAnimationFrame(update)
     }
 
+    const resizeObserver =
+      typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(requestUpdate)
+
+    if (mediaRef.current) resizeObserver?.observe(mediaRef.current)
     requestUpdate()
     window.addEventListener('scroll', requestUpdate, { passive: true })
     window.addEventListener('resize', requestUpdate)
 
     return () => {
+      resizeObserver?.disconnect()
       window.removeEventListener('scroll', requestUpdate)
       window.removeEventListener('resize', requestUpdate)
       if (animationFrame) window.cancelAnimationFrame(animationFrame)

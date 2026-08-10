@@ -198,7 +198,7 @@ Run the complete clone-safe verification gate before opening a pull request or d
 npm run check
 ```
 
-This regenerates Payload types and the admin import map, runs ESLint, and creates the production Next.js build. The GitHub Actions workflow runs the same checks on every push and pull request and fails if committed generated artifacts are stale.
+This regenerates Payload types and the admin import map, runs ESLint, and creates the production Next.js build. The GitHub Actions workflow runs the same checks on every push and pull request, applies the full migration chain to disposable PostgreSQL, and fails if committed generated artifacts are stale.
 
 With a configured local `.env`, also verify the connected CMS database and published homepage content:
 

@@ -1,0 +1,111 @@
+.page {
+  display: grid;
+  min-height: 100svh;
+  padding: clamp(7rem, 13vh, 10rem) var(--page-grid-pad) var(--space-12);
+  align-items: end;
+  overflow: clip;
+  background:
+    repeating-linear-gradient(
+      to right,
+      var(--color-line-soft) 0 var(--border-width),
+      transparent var(--border-width) calc((100% + var(--grid-gap)) / var(--grid-columns))
+    ) var(--page-grid-pad) 0 / var(--page-grid-width) 100% no-repeat,
+    var(--paper);
+  color: var(--ink);
+}
+
+.state {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--grid-gap);
+  padding-block: clamp(var(--space-10), 6vw, var(--space-20));
+  border-block: var(--border-width) solid var(--color-line);
+}
+
+.state h1 {
+  grid-column: 1 / 8;
+  max-width: 11ch;
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: clamp(3rem, 7vw, 6.5rem);
+  font-weight: var(--font-weight-regular);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.support {
+  grid-column: 9 / -1;
+  align-self: end;
+  min-width: 0;
+}
+
+.support p {
+  max-width: 42ch;
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-label);
+  line-height: 1.55;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+  align-items: center;
+  margin-top: var(--space-8);
+}
+
+.actions a,
+.actions button {
+  display: inline-flex;
+  min-height: var(--touch-target);
+  padding: 0;
+  border: 0;
+  border-bottom: var(--border-width) solid currentColor;
+  align-items: center;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-label);
+  letter-spacing: var(--letter-spacing-label);
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.actions a:hover,
+.actions button:hover {
+  color: var(--muted);
+}
+
+.actions button:focus-visible {
+  outline: var(--focus-width) solid var(--ink);
+  outline-offset: var(--focus-offset);
+}
+
+@media (max-width: 47.5rem) {
+  .state {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    row-gap: var(--space-16);
+  }
+
+  .state h1,
+  .support {
+    grid-column: 1 / -1;
+  }
+
+  .support {
+    max-width: 31rem;
+  }
+}
+
+@media (forced-colors: active) {
+  .actions a,
+  .actions button {
+    border-bottom-color: LinkText;
+  }
+}

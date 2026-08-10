@@ -15,6 +15,28 @@ import { Homepage } from './src/globals/Homepage'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+const databaseURI = process.env.DATABASE_URI?.trim()
+const payloadSecret = process.env.PAYLOAD_SECRET?.trim()
+const configuredCMSValues = [databaseURI, payloadSecret].filter(Boolean).length
+const isVercelProduction = process.env.VERCEL_ENV === 'production'
+
+if (configuredCMSValues === 1) {
+  throw new Error(
+    'CMS configuration is incomplete. Set both DATABASE_URI and PAYLOAD_SECRET or remove both for a frontend-only preview.',
+  )
+}
+
+if (
+  payloadSecret &&
+  (payloadSecret.length < 32 || payloadSecret === 'replace-with-a-long-random-secret')
+) {
+  throw new Error('PAYLOAD_SECRET must be a random value of at least 32 characters.')
+}
+
+if (isVercelProduction && configuredCMSValues !== 2) {
+  throw new Error('Production Vercel deployments require DATABASE_URI and PAYLOAD_SECRET.')
+}
+
 const r2Configuration = {
   accessKeyId: process.env.R2_ACCESS_KEY_ID,
   bucket: process.env.R2_BUCKET,
@@ -32,6 +54,12 @@ if (configuredR2Values > 0 && !hasR2Configuration) {
   )
 }
 
+if (isVercelProduction && !hasR2Configuration) {
+  throw new Error(
+    'Production Vercel deployments require all five R2_* variables; local media storage is ephemeral.',
+  )
+}
+
 const mediaObjectPrefix = 'architecture-website/v1/media'
 
 const storagePlugins = [
@@ -46,6 +74,8 @@ const storagePlugins = [
     collections: {
       media: {
         prefix: mediaObjectPrefix,
+        // Composite mode keeps this callback's prefix document-only, so the collection
+        // namespace is prepended exactly once and matches the adapter's object key.
         generateFileURL: ({ filename, prefix }) =>
           `${r2Configuration.publicURL!.replace(/\/$/, '')}/${[mediaObjectPrefix, prefix, filename]
             .filter(Boolean)
@@ -90,13 +120,13 @@ export default buildConfig({
   collections: [Users, Media, Projects],
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URI || '',
+      connectionString: databaseURI ?? '',
     },
   }),
   editor: lexicalEditor(),
   globals: [Homepage],
   plugins: storagePlugins,
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: payloadSecret ?? '',
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL,
   sharp,
   typescript: {

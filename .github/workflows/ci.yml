@@ -17,6 +17,20 @@ jobs:
     name: Verify repository
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
       DATABASE_URI: postgresql://postgres:postgres@127.0.0.1:5432/postgres
       NEXT_PUBLIC_SERVER_URL: http://localhost:3000
@@ -34,6 +48,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Apply Payload migrations
+        run: npm run migrate
 
       - name: Regenerate Payload artifacts
         run: |

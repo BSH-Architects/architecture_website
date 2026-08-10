@@ -59,6 +59,7 @@ export const Projects: CollectionConfig = {
       name: 'status',
       type: 'text',
       required: true,
+      label: 'Project status',
       admin: {
         position: 'sidebar',
         description: 'For example: Completed, In development, or Competition.',

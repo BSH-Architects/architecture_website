@@ -19,12 +19,7 @@ export const metadata: Metadata = {
 }
 
 export default async function ProjectsPage() {
-  const publishedProjects = cmsIsConfigured
-    ? await getPublishedProjects().catch((error: unknown) => {
-        console.error('Unable to load the project archive.', error)
-        return []
-      })
-    : []
+  const publishedProjects = cmsIsConfigured ? await getPublishedProjects() : []
 
   const projects = publishedProjects.flatMap<ArchiveProject>((project) => {
     const primaryImage = mediaData(project.coverImage, 'wide')

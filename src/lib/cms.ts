@@ -66,6 +66,10 @@ export async function getHomepageContent(): Promise<HomepageContent> {
     getPublishedProjects(),
   ])
 
+  if (homepage._status !== 'published') {
+    throw new Error('Published homepage content is unavailable.')
+  }
+
   const projectsByID = new Map(
     publishedProjects.map((project) => [String(project.id), project]),
   )

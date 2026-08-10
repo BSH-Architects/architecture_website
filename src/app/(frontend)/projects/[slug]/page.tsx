@@ -1,6 +1,8 @@
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { cache } from 'react'
 
 import { cmsIsConfigured, getPublishedProject, mediaData } from '@/lib/cms'
 import { SITE_NAME } from '@/lib/site'
@@ -202,6 +204,15 @@ function projectDetail(project: CmsProject): DetailProject | null {
   }
 }
 
+const loadProject = cache(async (slug: string): Promise<DetailProject | null> => {
+  const cmsProject = cmsIsConfigured ? await getPublishedProject(slug) : null
+
+  if (cmsProject) return projectDetail(cmsProject)
+  if (!cmsIsConfigured && allowPlaceholderContent) return previewProjects[slug] ?? null
+
+  return null
+})
+
 function ProjectImage({ image, priority = false }: { image: DetailImage; priority?: boolean }) {
   return (
     <Image
@@ -228,19 +239,30 @@ function ProjectCopy({ paragraphs }: { paragraphs: string[] }) {
   )
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const project = await loadProject(slug)
+
+  if (!project) {
+    return {
+      robots: { follow: false, index: false },
+      title: 'Project not found',
+    }
+  }
+
+  return {
+    description: project.intro[0],
+    title: project.title,
+  }
+}
+
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const cmsProject = cmsIsConfigured
-    ? await getPublishedProject(slug).catch((error: unknown) => {
-        console.error(`Unable to load project ${slug}.`, error)
-        return null
-      })
-    : null
-  const project = cmsProject
-    ? projectDetail(cmsProject)
-    : !cmsIsConfigured && allowPlaceholderContent
-      ? previewProjects[slug]
-      : null
+  const project = await loadProject(slug)
 
   if (!project) notFound()
 
