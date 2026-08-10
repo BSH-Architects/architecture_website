@@ -192,11 +192,17 @@ Dependencies use exact versions for reproducible builds. Most direct dependencie
 
 ## Validation
 
-Run before deployment:
+Run the complete clone-safe verification gate before opening a pull request or deploying:
 
 ```powershell
-npm run generate:types
-npm run generate:importmap
-npm run lint
-npm run build
+npm run check
+```
+
+This regenerates Payload types and the admin import map, runs ESLint, and creates the production Next.js build. The GitHub Actions workflow runs the same checks on every push and pull request and fails if committed generated artifacts are stale.
+
+With a configured local `.env`, also verify the connected CMS database and published homepage content:
+
+```powershell
+npm run payload -- migrate:status
+npm run verify:homepage
 ```
