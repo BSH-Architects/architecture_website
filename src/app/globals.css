@@ -8,8 +8,6 @@
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
-
 body { margin: 0; min-width: 20rem; }
 
 a { color: inherit; }

@@ -4,8 +4,10 @@ import type { ReactNode } from 'react'
 import { SITE_NAME } from '@/lib/site'
 
 import { SiteHeader } from './_components/SiteHeader'
+import { SmoothScroll } from './_components/SmoothScroll'
 import { displayFont, monoFont, textFont } from './fonts'
 
+import 'lenis/dist/lenis.css'
 import './tokens.css'
 import '../globals.css'
 
@@ -24,6 +26,7 @@ export default function FrontendLayout({ children }: { children: ReactNode }) {
       lang="en"
     >
       <body suppressHydrationWarning>
+        <SmoothScroll />
         <SiteHeader siteName={SITE_NAME} />
         {children}
       </body>

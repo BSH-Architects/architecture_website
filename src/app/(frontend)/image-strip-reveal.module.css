@@ -4,12 +4,15 @@
   inset: 0;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  overflow: hidden;
   pointer-events: none;
 }
 
 .strip {
   --strip-delay: 0ms;
 
+  width: calc(100% + 2px);
+  margin-inline: -1px;
   background: var(--charcoal);
   transform: translate3d(0, -100%, 0);
 }
