@@ -3,6 +3,8 @@ import Link from 'next/link'
 
 import { mediaData, type ProjectSummary } from '@/lib/cms'
 
+import { ImageStripReveal } from './ImageStripReveal'
+
 import styles from '../project-field-study.module.css'
 
 const cardLayouts = ['largeA', 'smallA', 'smallB', 'largeB'] as const
@@ -61,6 +63,7 @@ export function ProjectFieldStudy({
                 unoptimized
               />
             )}
+            <ImageStripReveal />
           </Link>
 
           <div className={styles.featureCaption}>
@@ -121,6 +124,7 @@ export function ProjectFieldStudy({
                         unoptimized
                       />
                     )}
+                    <ImageStripReveal />
                   </div>
 
                   <div className={styles.projectRow}>

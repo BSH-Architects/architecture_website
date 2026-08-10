@@ -603,10 +603,25 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Homepage {
   id: number;
+  /**
+   * The opening full-screen section of the homepage. These fields control its studio name, introductory copy, practice descriptor, and background image.
+   */
   hero: {
-    eyebrow?: string | null;
+    /**
+     * Displayed as the large animated name over the hero image.
+     */
     title: string;
+    /**
+     * A short statement shown in the bottom-left information rail. Aim for one clear sentence.
+     */
     summary?: string | null;
+    /**
+     * The short practice description shown in the center of the bottom rail.
+     */
+    practiceDescriptor: string;
+    /**
+     * Choose a wide, crop-safe image. Set its focal point in the Media library to protect the important area on smaller screens.
+     */
     image: number | Media;
   };
   /**
@@ -714,9 +729,9 @@ export interface HomepageSelect<T extends boolean = true> {
   hero?:
     | T
     | {
-        eyebrow?: T;
         title?: T;
         summary?: T;
+        practiceDescriptor?: T;
         image?: T;
       };
   position?:

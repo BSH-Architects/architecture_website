@@ -54,6 +54,10 @@ try {
     .map((line) => line.trim())
     .filter(Boolean)
   const failures = [
+    !nonEmpty(homepage.hero.title) && 'Homepage hero heading is empty.',
+    !nonEmpty(homepage.hero.summary) && 'Homepage hero summary is empty.',
+    !nonEmpty(homepage.hero.practiceDescriptor) &&
+      'Homepage hero practice descriptor is empty.',
     !heroImageID && 'Homepage hero image is missing.',
     !positionImageID && 'Position image is missing.',
     heroImageID === positionImageID && 'Position image must be independent from the hero image.',

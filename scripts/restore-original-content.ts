@@ -562,9 +562,9 @@ async function restore() {
       slug: 'homepage',
       data: {
         hero: {
-          eyebrow: 'Architecture / Interiors / Urban',
           title: 'Studio',
           summary: 'Rooms shaped by daylight, honest materials, and plans made to endure.',
+          practiceDescriptor: 'Independent architectural practice',
           image: homepageHero.id,
         },
         position: {

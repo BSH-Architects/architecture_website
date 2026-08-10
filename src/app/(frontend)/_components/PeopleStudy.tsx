@@ -3,6 +3,8 @@ import Image from 'next/image'
 import { peopleSectionDefaults } from '@/content/homepageDefaults'
 import type { MediaReference } from '@/lib/cms'
 
+import { ImageStripReveal } from './ImageStripReveal'
+
 import styles from '../people-study.module.css'
 
 type PersonContent = {
@@ -87,6 +89,7 @@ export function PeopleStudy({
                 src={founder.image?.url || founder.fallbackImageSrc}
                 unoptimized
               />
+              <ImageStripReveal />
             </div>
 
             <div className={styles.caption}>

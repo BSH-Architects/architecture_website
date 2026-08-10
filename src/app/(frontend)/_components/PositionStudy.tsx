@@ -3,6 +3,8 @@ import Image from 'next/image'
 import type { MediaReference } from '@/lib/cms'
 import { positionSectionDefaults } from '@/content/homepageDefaults'
 
+import { ImageStripReveal } from './ImageStripReveal'
+
 import styles from '../position-study.module.css'
 
 type PositionStudyProps = {
@@ -60,6 +62,7 @@ export function PositionStudy({
           ) : (
             <div aria-hidden="true" className={styles.mediaUnset} />
           )}
+          <ImageStripReveal />
         </div>
       </figure>
 

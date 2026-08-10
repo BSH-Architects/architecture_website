@@ -44,6 +44,8 @@ export default async function HomePage() {
     .filter(Boolean)
   const previewImageSrc = content ? null : previewHeroImagePath()
   const heroSummary = hero?.summary || heroPlaceholder.summary
+  const heroPracticeDescriptor =
+    hero?.practiceDescriptor || heroPlaceholder.practiceDescriptor
   const heroTarget = POSITION_ANCHOR
 
   return (
@@ -53,6 +55,7 @@ export default async function HomePage() {
           brand={hero?.title || SITE_NAME}
           image={heroImage}
           indexHref={heroTarget}
+          practiceDescriptor={heroPracticeDescriptor}
           previewImageSrc={previewImageSrc}
           summary={heroSummary}
         />

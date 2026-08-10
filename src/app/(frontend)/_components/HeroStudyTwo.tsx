@@ -12,6 +12,7 @@ type HeroStudyTwoProps = {
   brand: string
   image: MediaReference | null
   indexHref: string
+  practiceDescriptor: string
   previewImageSrc?: string | null
   summary?: string | null
 }
@@ -31,6 +32,7 @@ export function HeroStudyTwo({
   brand,
   image,
   indexHref,
+  practiceDescriptor,
   previewImageSrc,
   summary,
 }: HeroStudyTwoProps) {
@@ -100,7 +102,7 @@ export function HeroStudyTwo({
 
       <footer className={styles.bottomRail}>
         <p>{summary}</p>
-        <p>Independent architectural practice</p>
+        <p>{practiceDescriptor}</p>
         <Link href={indexHref}>Enter</Link>
       </footer>
     </section>

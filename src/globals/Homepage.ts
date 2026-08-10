@@ -25,15 +25,61 @@ export const Homepage: GlobalConfig = {
     {
       name: 'hero',
       type: 'group',
+      label: '01 — Hero',
+      admin: {
+        description:
+          'The opening full-screen section of the homepage. These fields control its studio name, introductory copy, practice descriptor, and background image.',
+      },
       fields: [
-        { name: 'eyebrow', type: 'text', label: 'Eyebrow' },
-        { name: 'title', type: 'text', required: true },
-        { name: 'summary', type: 'textarea' },
+        {
+          name: 'heroOrientation',
+          type: 'ui',
+          admin: {
+            components: {
+              Field: '/src/components/admin/HomepageHeroGuide#HomepageHeroGuide',
+            },
+          },
+        },
+        {
+          name: 'title',
+          type: 'text',
+          required: true,
+          label: 'Studio name / main heading',
+          admin: {
+            description: 'Displayed as the large animated name over the hero image.',
+          },
+        },
+        {
+          name: 'summary',
+          type: 'textarea',
+          label: 'Introductory summary',
+          admin: {
+            description:
+              'A short statement shown in the bottom-left information rail. Aim for one clear sentence.',
+            rows: 3,
+          },
+        },
+        {
+          name: 'practiceDescriptor',
+          type: 'text',
+          required: true,
+          maxLength: 80,
+          label: 'Practice descriptor',
+          defaultValue: 'Independent architectural practice',
+          admin: {
+            description: 'The short practice description shown in the center of the bottom rail.',
+          },
+        },
         {
           name: 'image',
           type: 'upload',
           relationTo: 'media',
           required: true,
+          label: 'Hero background image',
+          admin: {
+            description:
+              'Choose a wide, crop-safe image. Set its focal point in the Media library to protect the important area on smaller screens.',
+          },
         },
       ],
     },
