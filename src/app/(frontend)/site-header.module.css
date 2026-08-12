@@ -34,6 +34,7 @@
   transition:
     color 240ms ease-out,
     background-color 240ms ease-out,
+    height 480ms var(--ease-reveal),
     opacity 600ms ease-out var(--header-entrance-delay),
     transform 480ms var(--ease-reveal);
   visibility: visible;
@@ -110,6 +111,11 @@
 }
 
 .identityShort {
+  display: none;
+}
+
+.menuToggle,
+.menuBackdrop {
   display: none;
 }
 
@@ -242,53 +248,240 @@
 }
 
 @media (max-width: 47.5rem) {
+  .menuBackdrop {
+    position: fixed;
+    z-index: 90;
+    inset: 0;
+    display: block;
+    padding: 0;
+    border: 0;
+    background: var(--color-hero-overlay);
+    opacity: 0;
+    pointer-events: none;
+    touch-action: none;
+    transition:
+      opacity 320ms ease-out,
+      visibility 0s linear 480ms;
+    visibility: hidden;
+  }
+
+  .menuBackdrop[data-open="true"] {
+    opacity: 0.72;
+    pointer-events: auto;
+    transition-delay: 0ms;
+    visibility: visible;
+  }
+
+  .header {
+    height: calc(4rem + env(safe-area-inset-top, 0px));
+    min-height: calc(4rem + env(safe-area-inset-top, 0px));
+    overflow: hidden;
+  }
+
+  .mobileMenuOpen {
+    height: calc(clamp(19rem, 42svh, 24rem) + env(safe-area-inset-top, 0px));
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  .mobileMenuOpen::after {
+    inset-inline: 0;
+    opacity: 0.18;
+  }
+
   .inner {
+    height: 100%;
+    min-height: 0;
     grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-rows: 4rem minmax(0, 1fr) 4rem;
+    row-gap: 0;
+    padding-block-start: env(safe-area-inset-top, 0px);
   }
 
   .identity {
-    grid-column: 1 / 2;
-    font-size: 1.1875rem;
+    grid-column: 1 / 4;
+    grid-row: 1;
+    align-self: center;
+    font-size: 1.25rem;
   }
 
   .identityLong {
-    display: none;
-  }
-
-  .identityShort {
     display: inline;
   }
 
+  .identityShort {
+    display: none;
+  }
+
+  .menuToggle {
+    grid-column: 4 / -1;
+    grid-row: 1;
+    display: inline-flex;
+    min-height: var(--touch-target);
+    justify-self: end;
+    align-items: center;
+    gap: var(--space-3);
+    margin-inline-end: var(--space-2);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font-family: var(--font-family-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+  }
+
+  .menuToggle:focus-visible {
+    outline: none;
+  }
+
+  .menuToggle:focus-visible > span:first-child {
+    text-decoration: underline;
+    text-decoration-thickness: calc(var(--border-width) * 2);
+    text-underline-offset: var(--space-2);
+  }
+
+  .menuIcon {
+    position: relative;
+    display: block;
+    width: 1.125rem;
+    height: 0.75rem;
+    flex: none;
+  }
+
+  .menuIcon > span {
+    position: absolute;
+    inset-inline: 0;
+    height: var(--border-width);
+    background: currentColor;
+    transition: transform 360ms var(--ease-reveal), inset 360ms var(--ease-reveal);
+  }
+
+  .menuIcon > span:first-child {
+    inset-block-start: 0.125rem;
+  }
+
+  .menuIcon > span:last-child {
+    inset-block-end: 0.125rem;
+  }
+
+  .mobileMenuOpen .menuIcon > span:first-child {
+    inset-block-start: 50%;
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  .mobileMenuOpen .menuIcon > span:last-child {
+    inset-block-end: 50%;
+    transform: translateY(50%) rotate(-45deg);
+  }
+
   .navigation {
-    grid-column: 2 / 5;
-    gap: var(--space-1);
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: grid;
+    min-height: 0;
+    align-content: center;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, minmax(3rem, 1fr));
+    gap: 0;
+    border-top: var(--border-width) solid var(--color-line);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(calc(-1 * var(--space-4)));
+    transition:
+      opacity 200ms ease-out,
+      transform 420ms var(--ease-reveal);
+  }
+
+  .mobileMenuOpen .navigation {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+    transition-delay: 120ms;
   }
 
   .navigation a {
-    display: inline-flex;
-    gap: 0;
+    display: flex;
+    min-height: var(--touch-target);
+    align-items: center;
+    justify-content: flex-start;
+    padding-inline: 0;
+    border-bottom: var(--border-width) solid var(--color-line);
+    font-family: var(--font-family-display);
+    font-size: clamp(1.75rem, 8vw, 2.25rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    text-transform: none;
   }
 
-  .contactAction {
-    grid-column: 5 / -1;
-  }
-
-  .navigation,
-  .contactAction {
-    font-size: 0.6875rem;
-    letter-spacing: 0.04em;
+  .navigation a::after {
+    inset-inline: 0;
   }
 
   .index {
     display: none;
   }
+
+  .contactAction {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    width: 100%;
+    align-self: stretch;
+    justify-self: stretch;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-inline-end: 0;
+    border-top: var(--border-width) solid var(--color-line);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(var(--space-3));
+    transition:
+      opacity 180ms ease-out,
+      transform 360ms var(--ease-reveal);
+  }
+
+  .mobileMenuOpen .contactAction {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+    transition-delay: 180ms;
+  }
+
+  .contactAction::after {
+    inset-inline: 0;
+  }
+
+  .contactAction,
+  .menuToggle {
+    font-size: 0.6875rem;
+    letter-spacing: 0.055em;
+  }
 }
 
 @media (max-width: 23rem) {
-  .navigation,
-  .contactAction {
+  .mobileMenuOpen {
+    height: calc(clamp(18rem, 48svh, 22rem) + env(safe-area-inset-top, 0px));
+  }
+
+  .identity {
+    font-size: 1.125rem;
+  }
+
+  .navigation a {
+    font-size: 1.75rem;
+  }
+
+  .contactAction,
+  .menuToggle {
     font-size: 0.625rem;
     letter-spacing: 0.025em;
+  }
+
+  .menuToggle {
+    gap: var(--space-2);
+    margin-inline-end: var(--space-1);
   }
 }
 
@@ -305,5 +498,14 @@
   .identity::after,
   .skipLink {
     transition-duration: 0ms;
+
+  .menuBackdrop,
+  .menuIcon > span,
+  .navigation,
+  .contactAction {
+    transition-delay: 0ms;
+    transition-duration: 0ms;
+  }
+
   }
 }

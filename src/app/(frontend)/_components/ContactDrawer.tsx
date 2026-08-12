@@ -34,6 +34,8 @@ type ContactDrawerTriggerProps = {
   ariaLabel?: string
   children: ReactNode
   className?: string
+  onBeforeOpen?: () => void
+  openDelay?: number | (() => number)
 }
 
 const ContactDrawerContext = createContext<ContactDrawerContextValue | null>(null)
@@ -378,10 +380,38 @@ export function ContactDrawerTrigger({
   ariaLabel,
   children,
   className,
+  onBeforeOpen,
+  openDelay = 0,
 }: ContactDrawerTriggerProps) {
   const context = useContext(ContactDrawerContext)
+  const openTimerRef = useRef<number | null>(null)
+
+  useEffect(
+    () => () => {
+      if (openTimerRef.current !== null) window.clearTimeout(openTimerRef.current)
+    },
+    [],
+  )
 
   if (!context) throw new Error('ContactDrawerTrigger must be used inside ContactDrawerProvider')
+
+  const handleClick = () => {
+    onBeforeOpen?.()
+
+    const resolvedOpenDelay =
+      typeof openDelay === 'function' ? openDelay() : openDelay
+
+    if (resolvedOpenDelay <= 0) {
+      context.open()
+      return
+    }
+
+    if (openTimerRef.current !== null) window.clearTimeout(openTimerRef.current)
+    openTimerRef.current = window.setTimeout(() => {
+      context.open()
+      openTimerRef.current = null
+    }, resolvedOpenDelay)
+  }
 
   return (
     <button
@@ -389,7 +419,7 @@ export function ContactDrawerTrigger({
       aria-expanded={context.isOpen}
       aria-label={ariaLabel}
       className={className}
-      onClick={context.open}
+      onClick={handleClick}
       type="button"
     >
       {children}

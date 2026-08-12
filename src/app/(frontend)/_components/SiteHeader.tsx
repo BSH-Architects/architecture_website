@@ -26,6 +26,13 @@ const navItems = [
   { href: '/#people-study', label: 'People', section: 'people' },
 ] as const
 
+const MOBILE_MENU_CLOSE_DURATION = 420
+
+const getMobileMenuCloseDuration = () =>
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ? 0
+    : MOBILE_MENU_CLOSE_DURATION
+
 export function SiteHeader({ siteName }: SiteHeaderProps) {
   const pathname = usePathname()
 
@@ -34,8 +41,11 @@ export function SiteHeader({ siteName }: SiteHeaderProps) {
 
 function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
   const headerRef = useRef<HTMLElement>(null)
+  const menuToggleRef = useRef<HTMLButtonElement>(null)
+  const contactHandoffTimerRef = useRef<number | null>(null)
   const previousScrollY = useRef(0)
   const frame = useRef<number | null>(null)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrollState, setScrollState] = useState<ScrollState>({
     hidden: false,
     scrolled: false,
@@ -45,6 +55,94 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
   const projectsActive = pathname.startsWith('/projects')
   const opensOnDark = pathname === '/' || pathname === '/projects'
   const homeHeroPending = pathname === '/' && !homeHeroRevealed
+
+  const closeMobileMenu = () => setMobileMenuOpen(false)
+
+  const handleMobileContactHandoff = () => {
+    const closeDuration = getMobileMenuCloseDuration()
+    setMobileMenuOpen(false)
+
+    if (contactHandoffTimerRef.current !== null) {
+      window.clearTimeout(contactHandoffTimerRef.current)
+    }
+
+    contactHandoffTimerRef.current = window.setTimeout(() => {
+      menuToggleRef.current?.focus()
+      contactHandoffTimerRef.current = null
+    }, Math.max(0, closeDuration - 40))
+  }
+
+  useEffect(
+    () => () => {
+      if (contactHandoffTimerRef.current !== null) {
+        window.clearTimeout(contactHandoffTimerRef.current)
+      }
+    },
+    [],
+  )
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return
+
+    const backgroundElements = Array.from(
+      document.querySelectorAll<HTMLElement>('main, footer'),
+    )
+    const previousInert = backgroundElements.map((element) => element.inert)
+    const mobileQuery = window.matchMedia('(max-width: 47.5rem)')
+
+    backgroundElements.forEach((element) => {
+      element.inert = true
+    })
+
+    const focusMenuToggle = () => {
+      window.requestAnimationFrame(() => menuToggleRef.current?.focus())
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        setMobileMenuOpen(false)
+        focusMenuToggle()
+        return
+      }
+
+      if (event.key !== 'Tab' || !headerRef.current) return
+
+      const focusable = Array.from(
+        headerRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((element) => element.getClientRects().length > 0)
+
+      if (focusable.length === 0) return
+
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+
+    const handleViewportChange = (event: MediaQueryListEvent) => {
+      if (!event.matches) setMobileMenuOpen(false)
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    mobileQuery.addEventListener('change', handleViewportChange)
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      mobileQuery.removeEventListener('change', handleViewportChange)
+      backgroundElements.forEach((element, index) => {
+        element.inert = previousInert[index]
+      })
+    }
+  }, [mobileMenuOpen])
 
   useEffect(() => {
     if (pathname !== '/') return
@@ -123,7 +221,8 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
     pathname === '/' ? styles.waitsForHero : '',
     homeHeroPending ? styles.heroPending : '',
     scrollState.scrolled ? styles.scrolled : '',
-    scrollState.hidden ? styles.hidden : '',
+    scrollState.hidden && !mobileMenuOpen ? styles.hidden : '',
+    mobileMenuOpen ? styles.mobileMenuOpen : '',
   ]
     .filter(Boolean)
     .join(' ')
@@ -133,6 +232,17 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
       <a className={styles.skipLink} href="#top">
         Skip to content
       </a>
+
+      <button
+        aria-hidden={mobileMenuOpen ? undefined : true}
+        aria-label="Close navigation menu"
+        className={styles.menuBackdrop}
+        data-lenis-prevent
+        data-open={mobileMenuOpen ? 'true' : 'false'}
+        onClick={closeMobileMenu}
+        tabIndex={-1}
+        type="button"
+      />
 
       <header
         className={headerClassName}
@@ -145,6 +255,7 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
             aria-label={`${siteName}, home`}
             className={styles.identity}
             href="/"
+            onClick={closeMobileMenu}
           >
             <span className={styles.identityLong}>{siteName}</span>
             <span aria-hidden="true" className={styles.identityShort}>
@@ -152,12 +263,33 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
             </span>
           </Link>
 
-          <nav aria-label="Primary navigation" className={styles.navigation}>
+          <button
+            aria-controls="mobile-primary-navigation"
+            aria-expanded={mobileMenuOpen}
+            aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            className={styles.menuToggle}
+            onClick={() => setMobileMenuOpen((current) => !current)}
+            ref={menuToggleRef}
+            type="button"
+          >
+            <span>{mobileMenuOpen ? 'Close' : 'Menu'}</span>
+            <span aria-hidden="true" className={styles.menuIcon}>
+              <span />
+              <span />
+            </span>
+          </button>
+
+          <nav
+            aria-label="Primary navigation"
+            className={styles.navigation}
+            id="mobile-primary-navigation"
+          >
             {navItems.map((item, index) => (
               <Link
                 aria-current={item.section === 'projects' && projectsActive ? 'page' : undefined}
                 href={item.href}
                 key={item.href}
+                onClick={closeMobileMenu}
               >
                 <span aria-hidden="true" className={styles.index}>
                   {String(index + 1).padStart(2, '0')}
@@ -167,7 +299,12 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
             ))}
           </nav>
 
-          <ContactDrawerTrigger ariaLabel="Contact us" className={styles.contactAction}>
+          <ContactDrawerTrigger
+            ariaLabel="Contact us"
+            className={styles.contactAction}
+            onBeforeOpen={mobileMenuOpen ? handleMobileContactHandoff : undefined}
+            openDelay={mobileMenuOpen ? getMobileMenuCloseDuration : 0}
+          >
             <span>Contact us</span>
             <svg aria-hidden="true" className={styles.contactIcon} viewBox="0 0 16 16">
               <path d="M2.5 8h10M8.5 4l4 4-4 4" />
