@@ -321,35 +321,25 @@
   grid-column: 5 / 9;
 }
 
-.contactDetails > div p {
-  margin: 0 0 var(--space-3);
-  color: var(--color-text-muted);
-}
-
-.contactDetails a,
-.contactDetails span {
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-label);
-  letter-spacing: var(--letter-spacing-label);
-  text-transform: uppercase;
-}
-
-.contactDetails a {
-  text-underline-offset: var(--space-2);
-}
-
-
 .contactMethods {
   display: grid;
-  gap: var(--space-8);
-}
-
-.contactMethods > div {
-  min-width: 0;
+  justify-items: start;
+  gap: var(--space-4);
 }
 
 .contactMethods :is(a, span) {
+  display: block;
+  min-width: 0;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-label);
+  line-height: 1.4;
+  letter-spacing: var(--letter-spacing-label);
+  text-transform: uppercase;
   overflow-wrap: anywhere;
+}
+
+.contactMethods a {
+  text-underline-offset: var(--space-2);
 }
 
 

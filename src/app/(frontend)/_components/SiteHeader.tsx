@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import styles from '../site-header.module.css'
 import { ContactDrawerTrigger } from './ContactDrawer'
@@ -26,12 +26,17 @@ const navItems = [
   { href: '/#people-study', label: 'People', section: 'people' },
 ] as const
 
-const MOBILE_MENU_CLOSE_DURATION = 420
+const MOBILE_MENU_TRANSITION_DURATION = 480
+const MOBILE_CONTACT_HANDOFF_DELAY = 420
 
-const getMobileMenuCloseDuration = () =>
+const prefersReducedMotion = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    ? 0
-    : MOBILE_MENU_CLOSE_DURATION
+
+const getMobileMenuTransitionDuration = () =>
+  prefersReducedMotion() ? 0 : MOBILE_MENU_TRANSITION_DURATION
+
+const getMobileContactHandoffDelay = () =>
+  prefersReducedMotion() ? 0 : MOBILE_CONTACT_HANDOFF_DELAY
 
 export function SiteHeader({ siteName }: SiteHeaderProps) {
   const pathname = usePathname()
@@ -42,10 +47,12 @@ export function SiteHeader({ siteName }: SiteHeaderProps) {
 function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
   const headerRef = useRef<HTMLElement>(null)
   const menuToggleRef = useRef<HTMLButtonElement>(null)
+  const menuCloseTimerRef = useRef<number | null>(null)
   const contactHandoffTimerRef = useRef<number | null>(null)
   const previousScrollY = useRef(0)
   const frame = useRef<number | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [mobileMenuClosing, setMobileMenuClosing] = useState(false)
   const [scrollState, setScrollState] = useState<ScrollState>({
     hidden: false,
     scrolled: false,
@@ -56,11 +63,50 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
   const opensOnDark = pathname === '/' || pathname === '/projects'
   const homeHeroPending = pathname === '/' && !homeHeroRevealed
 
-  const closeMobileMenu = () => setMobileMenuOpen(false)
+  const beginMobileMenuClose = useCallback((restoreFocus = false) => {
+    const closeDuration = getMobileMenuTransitionDuration()
 
-  const handleMobileContactHandoff = () => {
-    const closeDuration = getMobileMenuCloseDuration()
     setMobileMenuOpen(false)
+    setMobileMenuClosing(closeDuration > 0)
+
+    if (menuCloseTimerRef.current !== null) {
+      window.clearTimeout(menuCloseTimerRef.current)
+      menuCloseTimerRef.current = null
+    }
+
+    if (closeDuration > 0) {
+      menuCloseTimerRef.current = window.setTimeout(() => {
+        setMobileMenuClosing(false)
+        menuCloseTimerRef.current = null
+      }, closeDuration)
+    }
+
+    if (restoreFocus) {
+      window.requestAnimationFrame(() => menuToggleRef.current?.focus())
+    }
+  }, [])
+
+  const openMobileMenu = useCallback(() => {
+    if (menuCloseTimerRef.current !== null) {
+      window.clearTimeout(menuCloseTimerRef.current)
+      menuCloseTimerRef.current = null
+    }
+
+    setMobileMenuClosing(false)
+    setMobileMenuOpen(true)
+  }, [])
+
+  const closeMobileMenu = useCallback(() => beginMobileMenuClose(false), [
+    beginMobileMenuClose,
+  ])
+
+  const dismissMobileMenu = useCallback(() => beginMobileMenuClose(true), [
+    beginMobileMenuClose,
+  ])
+
+  const handleMobileContactHandoff = useCallback(() => {
+    const handoffDelay = getMobileContactHandoffDelay()
+    beginMobileMenuClose(false)
 
     if (contactHandoffTimerRef.current !== null) {
       window.clearTimeout(contactHandoffTimerRef.current)
@@ -69,11 +115,14 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
     contactHandoffTimerRef.current = window.setTimeout(() => {
       menuToggleRef.current?.focus()
       contactHandoffTimerRef.current = null
-    }, Math.max(0, closeDuration - 40))
-  }
+    }, Math.max(0, handoffDelay - 40))
+  }, [beginMobileMenuClose])
 
   useEffect(
     () => () => {
+      if (menuCloseTimerRef.current !== null) {
+        window.clearTimeout(menuCloseTimerRef.current)
+      }
       if (contactHandoffTimerRef.current !== null) {
         window.clearTimeout(contactHandoffTimerRef.current)
       }
@@ -81,8 +130,10 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
     [],
   )
 
+  const mobileMenuActive = mobileMenuOpen || mobileMenuClosing
+
   useEffect(() => {
-    if (!mobileMenuOpen) return
+    if (!mobileMenuActive) return
 
     const backgroundElements = Array.from(
       document.querySelectorAll<HTMLElement>('main, footer'),
@@ -94,15 +145,10 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
       element.inert = true
     })
 
-    const focusMenuToggle = () => {
-      window.requestAnimationFrame(() => menuToggleRef.current?.focus())
-    }
-
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.preventDefault()
-        setMobileMenuOpen(false)
-        focusMenuToggle()
+        dismissMobileMenu()
         return
       }
 
@@ -129,7 +175,14 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
     }
 
     const handleViewportChange = (event: MediaQueryListEvent) => {
-      if (!event.matches) setMobileMenuOpen(false)
+      if (event.matches) return
+
+      if (menuCloseTimerRef.current !== null) {
+        window.clearTimeout(menuCloseTimerRef.current)
+        menuCloseTimerRef.current = null
+      }
+      setMobileMenuOpen(false)
+      setMobileMenuClosing(false)
     }
 
     document.addEventListener('keydown', handleKeyDown)
@@ -142,7 +195,7 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
         element.inert = previousInert[index]
       })
     }
-  }, [mobileMenuOpen])
+  }, [dismissMobileMenu, mobileMenuActive])
 
   useEffect(() => {
     if (pathname !== '/') return
@@ -234,18 +287,20 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
       </a>
 
       <button
-        aria-hidden={mobileMenuOpen ? undefined : true}
+        aria-hidden={mobileMenuActive ? undefined : true}
         aria-label="Close navigation menu"
         className={styles.menuBackdrop}
+        data-closing={mobileMenuClosing ? 'true' : undefined}
         data-lenis-prevent
         data-open={mobileMenuOpen ? 'true' : 'false'}
-        onClick={closeMobileMenu}
+        onClick={dismissMobileMenu}
         tabIndex={-1}
         type="button"
       />
 
       <header
         className={headerClassName}
+        data-lenis-prevent={mobileMenuActive ? 'true' : undefined}
         inert={homeHeroPending || undefined}
         ref={headerRef}
       >
@@ -268,7 +323,7 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
             aria-expanded={mobileMenuOpen}
             aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             className={styles.menuToggle}
-            onClick={() => setMobileMenuOpen((current) => !current)}
+            onClick={mobileMenuOpen ? dismissMobileMenu : openMobileMenu}
             ref={menuToggleRef}
             type="button"
           >
@@ -303,7 +358,7 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
             ariaLabel="Contact us"
             className={styles.contactAction}
             onBeforeOpen={mobileMenuOpen ? handleMobileContactHandoff : undefined}
-            openDelay={mobileMenuOpen ? getMobileMenuCloseDuration : 0}
+            openDelay={mobileMenuOpen ? getMobileContactHandoffDelay : 0}
           >
             <span>Contact us</span>
             <svg aria-hidden="true" className={styles.contactIcon} viewBox="0 0 16 16">

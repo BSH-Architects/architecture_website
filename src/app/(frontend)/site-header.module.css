@@ -272,6 +272,11 @@
     visibility: visible;
   }
 
+  .menuBackdrop[data-closing="true"] {
+    pointer-events: auto;
+    visibility: visible;
+  }
+
   .header {
     height: calc(4rem + env(safe-area-inset-top, 0px));
     min-height: calc(4rem + env(safe-area-inset-top, 0px));
@@ -287,6 +292,16 @@
   .mobileMenuOpen::after {
     inset-inline: 0;
     opacity: 0.18;
+  }
+
+  .navigation,
+  .contactAction {
+    visibility: hidden;
+  }
+
+  .mobileMenuOpen .navigation,
+  .mobileMenuOpen .contactAction {
+    visibility: visible;
   }
 
   .inner {
@@ -498,6 +513,7 @@
   .identity::after,
   .skipLink {
     transition-duration: 0ms;
+  }
 
   .menuBackdrop,
   .menuIcon > span,
@@ -505,7 +521,5 @@
   .contactAction {
     transition-delay: 0ms;
     transition-duration: 0ms;
-  }
-
   }
 }

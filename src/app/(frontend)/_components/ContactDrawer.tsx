@@ -355,14 +355,8 @@ export function ContactDrawerProvider({
             <section className={styles.contactDetails} aria-labelledby={`${titleId}-contact`}>
               <h3 id={`${titleId}-contact`}>Direct contact</h3>
               <div className={styles.contactMethods}>
-                <div>
-                  <p>Email</p>
-                  <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
-                </div>
-                <div>
-                  <p>Phone · Placeholder</p>
-                  <span>{contactPhone}</span>
-                </div>
+                <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+                <span>{contactPhone}</span>
               </div>
               <p className={styles.responseNote}>
                 Include your location and a short description of the project. Drawings and
