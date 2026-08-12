@@ -8,7 +8,7 @@ import { PositionStudy } from './_components/PositionStudy'
 import { PracticeStudy } from './_components/PracticeStudy'
 import { ProjectFieldStudy } from './_components/ProjectFieldStudy'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 const POSITION_ANCHOR = '#position-study'
 
@@ -37,7 +37,7 @@ export default async function HomePage() {
   const personOneImage = mediaData(people?.personOne?.image)
   const personTwoImage = mediaData(people?.personTwo?.image)
   const closing = content?.homepage.closing
-  const closingImage = mediaData(closing?.image)
+  const closingImage = mediaData(closing?.image, 'wide')
   const closingHeadingLines = closing?.heading
     .split(/\r?\n/)
     .map((line) => line.trim())

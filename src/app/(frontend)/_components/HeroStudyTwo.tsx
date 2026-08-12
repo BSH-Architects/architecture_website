@@ -72,6 +72,7 @@ export function HeroStudyTwo({
           <Image
             alt={image?.alt || ''}
             fill
+            priority
             sizes="100vw"
             src={source}
             style={objectPosition ? { objectPosition } : undefined}

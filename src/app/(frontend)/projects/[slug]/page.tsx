@@ -12,7 +12,7 @@ import { PageFooter } from '../../_components/PageFooter'
 import { ProjectImageCarousel } from './ProjectImageCarousel'
 import styles from './project-detail.module.css'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 const allowPlaceholderContent = process.env.NODE_ENV !== 'production'
 

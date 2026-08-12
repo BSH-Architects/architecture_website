@@ -100,8 +100,11 @@ export function ProjectFieldStudy({
 
           <div className={styles.projectGrid}>
             {projects.map((project, index) => {
-              const image = mediaData(project.coverImage, index % 4 < 2 ? 'wide' : 'card')
               const layout = cardLayouts[index % cardLayouts.length]
+              const image = mediaData(
+                project.coverImage,
+                layout.startsWith('large') ? 'wide' : 'card',
+              )
 
               return (
                 <Link

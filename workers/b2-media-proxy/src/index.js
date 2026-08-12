@@ -37,7 +37,7 @@ function publicResponse(response) {
 }
 
 const worker = {
-  async fetch(request, env, context) {
+  async fetch(request, env) {
     if (!['GET', 'HEAD'].includes(request.method)) {
       return new Response('Method Not Allowed', {
         headers: { Allow: 'GET, HEAD' },
@@ -50,15 +50,6 @@ const worker = {
 
     if (!objectKey.startsWith(MEDIA_PREFIX) || objectKey === MEDIA_PREFIX) {
       return new Response('Not Found', { status: 404 })
-    }
-
-    const cacheRequest = new Request(incomingURL.toString(), { method: 'GET' })
-    const canUseCache = !request.headers.has('range')
-    const cache = caches.default
-
-    if (canUseCache) {
-      const cached = await cache.match(cacheRequest)
-      if (cached) return request.method === 'HEAD' ? responseWithoutBody(cached) : cached
     }
 
     try {
@@ -88,12 +79,17 @@ const worker = {
         headers: forwardedHeaders,
         method: 'GET',
       })
-      const upstreamResponse = await fetch(signedRequest)
+      const upstreamResponse = await fetch(signedRequest, {
+        cf: {
+          cacheEverything: true,
+          cacheTtlByStatus: {
+            '200-299': 31536000,
+            '400-499': 0,
+            '500-599': 0,
+          },
+        },
+      })
       const response = publicResponse(upstreamResponse)
-
-      if (canUseCache && response.ok) {
-        context.waitUntil(cache.put(cacheRequest, response.clone()))
-      }
 
       return request.method === 'HEAD' ? responseWithoutBody(response) : response
     } catch (error) {

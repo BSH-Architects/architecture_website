@@ -11,7 +11,7 @@ import {
 
 import styles from './projects-page.module.css'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export const metadata: Metadata = {
   description: 'Selected architecture projects and studio work.',
