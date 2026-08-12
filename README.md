@@ -5,7 +5,7 @@ A deliberately small production foundation for an architecture practice:
 - **Next.js** renders the public content preview and hosts Payload.
 - **Payload CMS** supplies `/admin`, users, homepage controls, projects, project templates, and reusable sections.
 - **Neon Postgres** persists CMS data through Payload's Postgres adapter.
-- **Cloudflare R2** stores image uploads when all R2 variables are configured; local development otherwise uses `media/`.
+- **Backblaze B2** stores image uploads when all B2 variables are configured; local development otherwise uses `media/`.
 - **Vercel** deploys the Next.js application unchanged.
 
 The public routes are intentionally a content preview, not the final art direction. Replace the files in `src/app/(frontend)` with the approved components without changing the CMS model.
@@ -48,11 +48,11 @@ npm run generate:importmap
 
 ## Image delivery and asset library
 
-**Use Cloudflare R2 for every CMS-managed image**: homepage hero, project covers, galleries, editorial images, and future content uploads. The browser receives those images from the R2 public custom domain (for example, `https://media.example.com`), not from Vercel storage or a Vercel function. Authenticated uploads go browser → R2 via a short-lived signed URL, so large source files never pass through Vercel.
+**Use Backblaze B2 for every CMS-managed image**: homepage hero, project covers, galleries, editorial images, and future content uploads. The browser receives those images from the Cloudflare media domain (for example, `https://media.example.com`), not from Vercel storage or a Vercel function. Authenticated uploads go browser → B2 via a short-lived signed URL, so large source files never pass through Vercel.
 
 Keep only small, code-owned UI assets in the repository—for example an SVG wordmark, favicon, or interface icon. Next/Vercel serves those static build assets from its edge CDN. Do **not** use Vercel's ephemeral filesystem for editor-uploaded images; it is a local-development fallback only and can disappear on a deployment.
 
-R2 object keys use one immutable technical namespace:
+B2 object keys use one immutable technical namespace:
 
 ```text
 architecture-website/v1/media/<collision-safe-filename>
@@ -60,58 +60,78 @@ architecture-website/v1/media/<collision-safe-filename>
 
 Payload creates the `card` and `wide` WebP renditions alongside the original within that namespace. `v1` provides a clean migration boundary should the storage convention ever need to change. Keys deliberately do **not** contain project slugs, titles, or dates: projects can be renamed, images can be reused, and moving a blob would create cache misses and orphan risks without making it faster.
 
-Instead, organize images in the Payload Media library with the required **Asset group** (`Website`, `Project`, `Identity`, `Editorial / press`, or `Archive`), optional related projects, tags, caption, credit, alt text, and focal point. This is the editor-friendly organizational system; R2 folders are an implementation detail.
+Instead, organize images in the Payload Media library with the required **Asset group** (`Website`, `Project`, `Identity`, `Editorial / press`, or `Archive`), optional related projects, tags, caption, credit, alt text, and focal point. This is the editor-friendly organizational system; B2 folders are an implementation detail.
 
-The temporary preview already reads direct public image URLs. It should use the generated `card` / `wide` rendition URLs when final components are built rather than rendering original camera files. R2 delivers and caches files; it does not automatically resize them at request time. The Payload renditions, proper `sizes` attributes, and lazy loading below the fold are the performance controls for the final design.
+The temporary preview already reads direct public image URLs. It should use the generated `card` / `wide` rendition URLs when final components are built rather than rendering original camera files. B2 stores files and Cloudflare delivers and caches them; neither service automatically resizes images at request time. The Payload renditions, proper `sizes` attributes, and lazy loading below the fold are the performance controls for the final design.
 
 ## Client ownership and overnight development policy
 
-Until the client creates their accounts, development stays **local only**. Do not create a temporary Vercel project, deploy a live preview, attach the client domain, create a personal Cloudflare R2 bucket, or upload client production assets under a developer account.
+Until the client creates their accounts, development stays **local only**. Do not create a temporary Vercel project, deploy a live preview, attach the client domain, create a personal Backblaze B2 bucket, or upload client production assets under a developer account.
 
-The application is intentionally account-neutral: credentials are read only from environment variables, the local filesystem is the upload fallback when all `R2_*` values are blank, and no client domain or account identifier is hard-coded. Once the client creates Cloudflare, Neon, Vercel, and preferably a client-owned GitHub organization, they remain Owner and invite the developer’s own account. Add the client-owned environment variables, run the migration, complete the R2 smoke test, and perform the first deployment directly from the client-owned Vercel team.
+The application is intentionally account-neutral: credentials are read only from environment variables, the local filesystem is the upload fallback when all `B2_*` values are blank, and no client domain or account identifier is hard-coded. Once the client creates Backblaze, Cloudflare, Neon, Vercel, and preferably a client-owned GitHub organization, they remain Owner and invite the developer’s own account. Add the client-owned environment variables, run the migration, complete the B2 smoke test, and perform the first deployment directly from the client-owned Vercel team.
 
 ## What you need to create or provide
 
-You own all accounts and secrets. **Do not send passwords, database URLs, `PAYLOAD_SECRET`, R2 access keys, or Vercel tokens in chat.** Put them directly in your local `.env` and Vercel's encrypted environment-variable UI. I only need non-secret decisions if you want configuration reviewed: production app domain, media subdomain, whether you need a staging environment, and any expected project/image volumes.
+You own all accounts and secrets. **Do not send passwords, database URLs, `PAYLOAD_SECRET`, B2 access keys, or Vercel tokens in chat.** Put them directly in your local `.env` and Vercel's encrypted environment-variable UI. I only need non-secret decisions if you want configuration reviewed: production app domain, media subdomain, whether you need a staging environment, and any expected project/image volumes.
 
-### 1. Cloudflare: R2 and public media domain
+### 1. Private Backblaze B2 storage and Cloudflare Worker CDN
 
-1. Create or use a Cloudflare account. Your primary domain should be managed in its DNS if you want `media.yourdomain.com`.
-2. Create a **dedicated production bucket**, named consistently, for example `architecture-website-media-production`. If previews/staging will be tested with real uploads, create a separate bucket such as `architecture-website-media-staging`; never let preview deployments write into production media.
-3. In R2, create an **S3 API token** scoped only to the relevant bucket with **Object Read** and **Object Write** permissions. Save its Access Key ID and Secret Access Key directly in `.env` / Vercel. It is never exposed to browsers; browser uploads use short-lived signed URLs.
-4. Copy the R2 S3 endpoint: `https://YOUR_ACCOUNT_ID.r2.cloudflarestorage.com`.
-5. Attach a public custom domain such as `media.yourdomain.com` to the bucket. Copy the resulting HTTPS URL without a trailing slash. This is `R2_PUBLIC_URL`.
-6. Configure the bucket CORS policy, replacing the example domains and adding only origins that will actually upload through Payload:
+1. In the client-owned Backblaze account, enable **B2 Cloud Storage** and create a dedicated **Private** production bucket. Private buckets avoid the payment verification Backblaze requires for the first public bucket. Keep Object Lock off unless retention rules are explicitly required, because locked files cannot be deleted from Payload.
+2. Copy the bucket's exact S3 endpoint and region. They have the form `https://s3.us-east-005.backblazeb2.com` and `us-east-005`; do not use a friendly download host as `B2_ENDPOINT`.
+3. Create a bucket-restricted **Read and Write** application key for Payload. Enable **List All Bucket Names** and optionally restrict the filename prefix to `architecture-website/v1/media/`. Store its key ID and application key only as `B2_ACCESS_KEY_ID` / `B2_SECRET_ACCESS_KEY` in local and Vercel secret storage.
+4. Create a second bucket-restricted **Read Only** key with the same filename prefix for Cloudflare. Never give the public-delivery Worker the Payload write key.
+5. Deploy the Worker in `workers/b2-media-proxy`. Its non-secret bucket/endpoint/region bindings live in `wrangler.jsonc`; add the read-only key as encrypted Cloudflare secrets named `B2_APPLICATION_KEY_ID` and `B2_APPLICATION_KEY`. The Worker accepts only `GET`/`HEAD`, exposes only the media prefix, signs private path-style B2 requests, and caches successful files with immutable headers.
+
+```powershell
+cd workers/b2-media-proxy
+npm install
+npx wrangler login
+npm run check
+npm run deploy
+cd ../..
+```
+
+6. Use the deployed `https://<worker>.<account>.workers.dev` URL as `B2_PUBLIC_URL` without a trailing slash. A custom `media.example.com` Worker domain can replace it later without changing object keys.
+7. Configure this S3-compatible CORS policy on the B2 bucket for direct authenticated Payload uploads. Replace the production origin after Vercel assigns the application URL:
 
 ```json
-[
-  {
-    "AllowedOrigins": [
-      "http://localhost:3000",
-      "https://yourdomain.com",
-      "https://www.yourdomain.com"
-    ],
-    "AllowedMethods": ["GET", "HEAD", "PUT"],
-    "AllowedHeaders": ["Content-Type", "Content-Length"],
-    "ExposeHeaders": ["ETag"],
-    "MaxAgeSeconds": 86400
-  }
-]
+{
+  "CORSRules": [
+    {
+      "AllowedOrigins": [
+        "http://localhost:3000",
+        "https://your-project.vercel.app"
+      ],
+      "AllowedMethods": ["GET", "HEAD", "PUT"],
+      "AllowedHeaders": ["Content-Type", "Content-Length"],
+      "ExposeHeaders": ["ETag"],
+      "MaxAgeSeconds": 86400
+    }
+  ]
+}
 ```
 
-If you run a separate staging app, add only its exact HTTPS domain. Do not use `*` for origins in production.
+Use Backblaze's bucket CORS controls where available or the standard S3 `PutBucketCors` operation with a separate administrative credential. Do not grant bucket-configuration permissions to the long-lived Payload upload key, and do not use `*` for production origins.
 
-The five required R2 variables are shown in `.env.example`:
+The six required application variables are shown in `.env.example`:
 
 ```text
-R2_BUCKET
-R2_ENDPOINT
-R2_ACCESS_KEY_ID
-R2_SECRET_ACCESS_KEY
-R2_PUBLIC_URL
+B2_BUCKET
+B2_ENDPOINT
+B2_REGION
+B2_ACCESS_KEY_ID
+B2_SECRET_ACCESS_KEY
+B2_PUBLIC_URL
 ```
 
-The application rejects partial configuration. Leave all five blank for a local-filesystem-only session, or set all five to exercise the real R2 path.
+The application rejects partial or mismatched configuration. Leave all six blank for local filesystem storage, or set all six for B2. After the Worker successfully returns an authenticated B2 `404` for a missing allowed-prefix object, migrate the existing local originals and renditions with a dry run followed by the dedicated write command:
+
+```powershell
+npm run sync:media:b2
+npm run sync:media:b2:apply
+```
+
+The sync is idempotent, uploads to `architecture-website/v1/media/`, skips same-sized existing objects, and refuses to overwrite a different object unless the positional `overwrite` mode is explicitly supplied.
 
 ### 2. Neon: CMS database
 
@@ -128,22 +148,22 @@ npm run migrate
 ### 3. Vercel: application hosting
 
 1. Import this repository as a Next.js project.
-2. Set the **Production** environment variables: `DATABASE_URI`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SERVER_URL`, and all five R2 variables. Set `NEXT_PUBLIC_SERVER_URL` to the final HTTPS application domain, no trailing slash.
+2. Set the **Production** environment variables: `DATABASE_URI`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SERVER_URL`, and all six B2 variables. Set `NEXT_PUBLIC_SERVER_URL` to the final HTTPS application domain, no trailing slash.
 3. Create `PAYLOAD_SECRET` locally with a cryptographically random value, for example:
 
 ```powershell
 node -e "console.log(require('node:crypto').randomBytes(48).toString('base64url'))"
 ```
 
-4. For Preview environments, either use separate Neon/R2 resources and exact preview CORS origins, or omit CMS/R2 secrets so previews cannot edit production content.
-5. Deploy only after migrations have completed. Vercel has no need for an R2 secret in client-side code; all secrets remain server-side.
+4. For Preview environments, either use separate Neon/B2 resources and exact preview CORS origins, or omit CMS/B2 secrets so previews cannot edit production content.
+5. Deploy only after migrations have completed. Vercel has no need for a B2 secret in client-side code; all secrets remain server-side.
 
 ## Local and production test run
 
 ### Local, without Cloudflare
 
 1. Install Node `24.11.1` from `.nvmrc` and run `npm install`.
-2. Copy `.env.example` to `.env`; set only `PAYLOAD_SECRET` and `DATABASE_URI`, leaving every `R2_*` value blank.
+2. Copy `.env.example` to `.env`; set only `PAYLOAD_SECRET` and `DATABASE_URI`, leaving every `B2_*` value blank.
 3. Create/apply migrations, then run:
 
 ```powershell
@@ -152,15 +172,15 @@ npm run dev
 
 4. Open `http://localhost:3000` for the temporary public preview and `http://localhost:3000/admin` to create the first administrator. Local uploads go into the ignored `media/` directory.
 
-### Real R2 smoke test
+### Real B2 smoke test
 
-1. Add all five R2 values to local `.env`, use the production/staging media domain, and confirm the CORS policy includes `http://localhost:3000`.
+1. Add all six B2 values to local `.env`, use the production/staging media domain, and confirm the CORS policy includes `http://localhost:3000`.
 2. Run `npm run dev`, sign in at `/admin`, upload an image, set its alt text and Asset group, then assign it to the homepage hero or a project and publish that content.
 3. Verify all of the following:
    - the image appears at `http://localhost:3000`;
-   - the image URL begins with your `R2_PUBLIC_URL`;
-   - R2 shows keys under `architecture-website/v1/media/`;
-   - browser DevTools → Network shows the upload `PUT` going to R2, not a Vercel URL;
+   - the image URL begins with your `B2_PUBLIC_URL`;
+   - B2 shows keys under `architecture-website/v1/media/`;
+   - browser DevTools → Network shows the upload `PUT` going to B2, not a Vercel URL;
    - the public media URL returns `200` in a private/incognito browser window.
 
 ### Pre-deployment check and live test
@@ -174,11 +194,11 @@ npm run lint
 npm run build
 ```
 
-After production deployment, open the public domain, `/admin`, and one published project URL. Upload a non-critical test image, verify the R2 custom-domain URL and cache headers in DevTools, then delete the test asset if it is not needed. The public experience is intentionally still a content preview until visual implementation begins.
+After production deployment, open the public domain, `/admin`, and one published project URL. Upload a non-critical test image, verify the B2-backed Cloudflare media URL and cache headers in DevTools, then delete the test asset if it is not needed. The public experience is intentionally still a content preview until visual implementation begins.
 
 ## Vercel
 
-Import the repository as a Next.js project. Production CMS media must use R2; Vercel's filesystem is ephemeral. Apply database migrations explicitly from a trusted environment before deploying code that depends on a new schema.
+Import the repository as a Next.js project. Production CMS media must use B2; Vercel's filesystem is ephemeral. Apply database migrations explicitly from a trusted environment before deploying code that depends on a new schema.
 
 ## Intentional version pins
 

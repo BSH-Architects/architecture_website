@@ -18,9 +18,12 @@
     "migrate": "payload migrate",
     "migrate:create": "payload migrate:create",
     "restore:content": "payload run scripts/restore-original-content.ts",
+    "sync:media:b2": "payload run scripts/sync-media-to-b2.ts",
+    "sync:media:b2:apply": "payload run scripts/sync-media-to-b2.ts apply",
     "verify:homepage": "payload run scripts/verify-homepage-content.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "3.1105.0",
     "@payloadcms/db-postgres": "3.87.1",
     "@payloadcms/next": "3.87.1",
     "@payloadcms/richtext-lexical": "3.87.1",

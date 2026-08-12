@@ -37,26 +37,39 @@ if (isVercelProduction && configuredCMSValues !== 2) {
   throw new Error('Production Vercel deployments require DATABASE_URI and PAYLOAD_SECRET.')
 }
 
-const r2Configuration = {
-  accessKeyId: process.env.R2_ACCESS_KEY_ID,
-  bucket: process.env.R2_BUCKET,
-  endpoint: process.env.R2_ENDPOINT,
-  publicURL: process.env.R2_PUBLIC_URL,
-  secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+const b2Configuration = {
+  accessKeyId: process.env.B2_ACCESS_KEY_ID?.trim(),
+  bucket: process.env.B2_BUCKET?.trim(),
+  endpoint: process.env.B2_ENDPOINT?.trim(),
+  publicURL: process.env.B2_PUBLIC_URL?.trim(),
+  region: process.env.B2_REGION?.trim(),
+  secretAccessKey: process.env.B2_SECRET_ACCESS_KEY?.trim(),
 }
 
-const configuredR2Values = Object.values(r2Configuration).filter(Boolean).length
-const hasR2Configuration = configuredR2Values === Object.keys(r2Configuration).length
+const configuredB2Values = Object.values(b2Configuration).filter(Boolean).length
+const hasB2Configuration = configuredB2Values === Object.keys(b2Configuration).length
 
-if (configuredR2Values > 0 && !hasR2Configuration) {
+if (configuredB2Values > 0 && !hasB2Configuration) {
   throw new Error(
-    'Cloudflare R2 configuration is incomplete. Set all five R2_* variables or remove all of them for local storage.',
+    'Backblaze B2 configuration is incomplete. Set all six B2_* variables or remove all of them for local storage.',
   )
 }
 
-if (isVercelProduction && !hasR2Configuration) {
+if (hasB2Configuration) {
+  const expectedEndpoint = `https://s3.${b2Configuration.region}.backblazeb2.com`
+
+  if (b2Configuration.endpoint !== expectedEndpoint) {
+    throw new Error(`B2_ENDPOINT must match the bucket endpoint: ${expectedEndpoint}`)
+  }
+
+  if (!b2Configuration.publicURL!.startsWith('https://')) {
+    throw new Error('B2_PUBLIC_URL must be an HTTPS Cloudflare URL.')
+  }
+}
+
+if (isVercelProduction && !hasB2Configuration) {
   throw new Error(
-    'Production Vercel deployments require all five R2_* variables; local media storage is ephemeral.',
+    'Production Vercel deployments require all six B2_* variables; local media storage is ephemeral.',
   )
 }
 
@@ -65,35 +78,36 @@ const mediaObjectPrefix = 'architecture-website/v1/media'
 const storagePlugins = [
   s3Storage({
     alwaysInsertFields: true,
-    bucket: r2Configuration.bucket ?? 'local-media',
-    clientUploads: hasR2Configuration
+    bucket: b2Configuration.bucket ?? 'local-media',
+    clientUploads: hasB2Configuration
       ? {
           access: ({ req }) => Boolean(req.user),
         }
       : false,
     collections: {
       media: {
+        disablePayloadAccessControl: true,
         prefix: mediaObjectPrefix,
         // Composite mode keeps this callback's prefix document-only, so the collection
         // namespace is prepended exactly once and matches the adapter's object key.
         generateFileURL: ({ filename, prefix }) =>
-          `${r2Configuration.publicURL!.replace(/\/$/, '')}/${[mediaObjectPrefix, prefix, filename]
+          `${b2Configuration.publicURL!.replace(/\/$/, '')}/${[mediaObjectPrefix, prefix, filename]
             .filter(Boolean)
             .join('/')}`,
       },
     },
-    config: hasR2Configuration
+    config: hasB2Configuration
       ? {
           credentials: {
-            accessKeyId: r2Configuration.accessKeyId!,
-            secretAccessKey: r2Configuration.secretAccessKey!,
+            accessKeyId: b2Configuration.accessKeyId!,
+            secretAccessKey: b2Configuration.secretAccessKey!,
           },
-          endpoint: r2Configuration.endpoint!,
+          endpoint: b2Configuration.endpoint!,
           forcePathStyle: true,
-          region: 'auto',
+          region: b2Configuration.region!,
         }
       : {},
-    enabled: hasR2Configuration,
+    enabled: hasB2Configuration,
     useCompositePrefixes: true,
   }),
 ]

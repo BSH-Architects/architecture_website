@@ -516,10 +516,17 @@ async function relateProjectMedia(
 }
 
 async function restore() {
-  if (['R2_BUCKET', 'R2_ENDPOINT', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY', 'R2_PUBLIC_URL'].some(
-    (key) => Boolean(process.env[key]),
-  )) {
-    throw new Error('Local restoration requires every R2_* variable to remain empty.')
+  if (
+    [
+      'B2_BUCKET',
+      'B2_ENDPOINT',
+      'B2_REGION',
+      'B2_ACCESS_KEY_ID',
+      'B2_SECRET_ACCESS_KEY',
+      'B2_PUBLIC_URL',
+    ].some((key) => Boolean(process.env[key]))
+  ) {
+    throw new Error('Local restoration requires every B2_* variable to remain empty.')
   }
 
   let payload: Payload | undefined

@@ -26,7 +26,7 @@ Editors work in a Media → Projects → Homepage sequence. They first upload an
 
 - Next.js hosts the public site, Payload admin, and APIs.
 - Neon Postgres stores CMS records and version history.
-- Media uses the local ignored `media/` directory during development and Cloudflare R2 in production.
+- Media uses the local ignored `media/` directory during development and Backblaze B2 through Cloudflare in production.
 - Projects contain shared summary metadata, two work-archive images, optional closing imagery, rich introductions, and reorderable narrative blocks.
 - The Homepage global controls hero content, one signature project, and ordered selected work.
 - Public reads expose published projects only. Authenticated editors manage content; administrators manage users and roles.

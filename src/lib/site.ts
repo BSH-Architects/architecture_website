@@ -31,7 +31,7 @@ const PREVIEW_IMAGE_CANDIDATES = [
 
 /**
  * Drop any photograph at public/preview/hero.jpg (or .webp/.avif/.png) to view the
- * hero with real imagery before Cloudflare R2 and the CMS are connected. The
+ * hero with real imagery before Backblaze B2, Cloudflare, and the CMS are connected. The
  * directory is git-ignored, so nothing leaks into the client repository.
  */
 export function previewHeroImagePath(): string | null {

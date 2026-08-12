@@ -157,7 +157,7 @@ export interface User {
 export interface Media {
   id: number;
   /**
-   * Organizes the CMS library. It does not change the immutable R2 object key.
+   * Organizes the CMS library. It does not change the immutable B2 object key.
    */
   assetGroup: 'website' | 'project' | 'identity' | 'editorial' | 'archive';
   /**

@@ -58,7 +58,7 @@ export const Media: CollectionConfig = {
         { label: 'Archive', value: 'archive' },
       ],
       admin: {
-        description: 'Organizes the CMS library. It does not change the immutable R2 object key.',
+        description: 'Organizes the CMS library. It does not change the immutable B2 object key.',
       },
     },
     {
