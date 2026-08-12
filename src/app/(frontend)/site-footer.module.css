@@ -132,6 +132,16 @@
   transition: transform 320ms var(--ease-reveal);
 }
 
+.navigation a:focus-visible,
+.practice a:focus-visible {
+  outline: none;
+}
+
+.navigation a:focus-visible::after,
+.practice a:focus-visible::after {
+  height: calc(var(--border-width) * 2);
+}
+
 .navigation a:hover::after,
 .navigation a:focus-visible::after,
 .practice a:hover::after,
@@ -303,8 +313,8 @@
 }
 
 .leadAction:focus-visible {
-  outline: var(--focus-width) solid var(--ink);
-  outline-offset: var(--focus-offset);
+  border-bottom-width: calc(var(--border-width) * 2);
+  outline: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

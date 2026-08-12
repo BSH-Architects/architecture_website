@@ -152,8 +152,6 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
             </span>
           </Link>
 
-          <p className={styles.disciplines}>Architecture / Interiors / Landscape</p>
-
           <nav aria-label="Primary navigation" className={styles.navigation}>
             {navItems.map((item, index) => (
               <Link
@@ -167,16 +165,11 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
                 <span>{item.label}</span>
               </Link>
             ))}
-            <ContactDrawerTrigger
-              ariaLabel="Partner with us"
-              className={styles.contactTrigger}
-            >
-              <span aria-hidden="true" className={styles.index}>
-                04
-              </span>
-              <span>Partner</span>
-            </ContactDrawerTrigger>
           </nav>
+
+          <ContactDrawerTrigger ariaLabel="Contact us" className={styles.contactAction}>
+            <span>Contact us</span>
+          </ContactDrawerTrigger>
         </div>
 
         <span aria-hidden="true" className={styles.progress} />
