@@ -270,3 +270,57 @@
     transition-duration: 0ms;
   }
 }
+
+
+.contactTrigger {
+  position: relative;
+  display: inline-grid;
+  min-height: var(--touch-target);
+  grid-template-columns: auto auto;
+  gap: var(--space-2);
+  align-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  white-space: nowrap;
+}
+
+.contactTrigger::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--border-width);
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 360ms var(--ease-reveal);
+}
+
+.contactTrigger:hover::after,
+.contactTrigger:focus-visible::after,
+.contactTrigger[aria-expanded="true"]::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.contactTrigger:focus-visible {
+  outline-color: currentColor;
+}
+
+@media (max-width: 47.5rem) {
+  .contactTrigger {
+    display: inline-flex;
+    gap: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contactTrigger::after {
+    transition-duration: 0ms;
+  }
+}

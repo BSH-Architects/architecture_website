@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import styles from '../site-footer.module.css'
+import { ContactDrawerTrigger } from './ContactDrawer'
 
 const footerLinks = [
   { href: '/projects', label: 'Selected work' },
@@ -16,9 +17,13 @@ export function SiteFooter({ siteName }: { siteName: string }) {
       <div className={styles.top}>
         <div className={styles.lead}>
           <h2>Every project begins in conversation.</h2>
-          <Link href="/projects">
-            Explore selected work <span aria-hidden="true">→</span>
-          </Link>
+          <ContactDrawerTrigger
+            ariaLabel="Partner with us"
+            className={styles.leadAction}
+          >
+            <span>Partner with us</span>
+            <span aria-hidden="true">→</span>
+          </ContactDrawerTrigger>
         </div>
 
         <nav aria-label="Footer" className={styles.navigation}>

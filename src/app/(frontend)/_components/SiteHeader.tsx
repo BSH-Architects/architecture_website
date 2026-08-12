@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
 import styles from '../site-header.module.css'
+import { ContactDrawerTrigger } from './ContactDrawer'
 
 type SiteHeaderProps = {
   siteName: string
@@ -166,6 +167,15 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
                 <span>{item.label}</span>
               </Link>
             ))}
+            <ContactDrawerTrigger
+              ariaLabel="Partner with us"
+              className={styles.contactTrigger}
+            >
+              <span aria-hidden="true" className={styles.index}>
+                04
+              </span>
+              <span>Partner</span>
+            </ContactDrawerTrigger>
           </nav>
         </div>
 

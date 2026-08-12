@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 
 import { SITE_NAME } from '@/lib/site'
 
+import { ContactDrawerProvider } from './_components/ContactDrawer'
 import { SiteHeader } from './_components/SiteHeader'
 import { SmoothScroll } from './_components/SmoothScroll'
 import { displayFont, monoFont, textFont } from './fonts'
@@ -20,15 +21,19 @@ export const metadata: Metadata = {
 }
 
 export default function FrontendLayout({ children }: { children: ReactNode }) {
+  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || undefined
+
   return (
     <html
       className={`${displayFont.variable} ${textFont.variable} ${monoFont.variable}`}
       lang="en"
     >
       <body suppressHydrationWarning>
-        <SmoothScroll />
-        <SiteHeader siteName={SITE_NAME} />
-        {children}
+        <ContactDrawerProvider contactEmail={contactEmail} siteName={SITE_NAME}>
+          <SmoothScroll />
+          <SiteHeader siteName={SITE_NAME} />
+          {children}
+        </ContactDrawerProvider>
       </body>
     </html>
   )
