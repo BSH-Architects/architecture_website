@@ -242,8 +242,8 @@
   }
 
   .featureMedia {
-    height: 68svh;
-    min-height: 31.25rem;
+    height: auto;
+    min-height: 0;
   }
 
   .featureCaption {
@@ -273,6 +273,7 @@
     margin-top: 0;
   }
 
+  .featureMedia,
   .largeA .projectImage,
   .largeB .projectImage,
   .smallA .projectImage,

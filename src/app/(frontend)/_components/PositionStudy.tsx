@@ -69,7 +69,10 @@ export function PositionStudy({
       <div className={styles.copy}>
         <h2 id="position-study-title">
           {headingLines.map((line, index) => (
-            <span key={`${line}-${index}`}>{line}</span>
+            <span key={`${line}-${index}`}>
+              {line}
+              {index < headingLines.length - 1 ? ' ' : null}
+            </span>
           ))}
         </h2>
 

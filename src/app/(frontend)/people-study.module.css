@@ -214,8 +214,10 @@
   }
 
   .intro h2 {
-    max-width: 16ch;
-    font-size: clamp(2.25rem, 10vw, 3.5rem);
+    width: calc(100% + var(--page-grid-pad));
+    max-width: none;
+    font-size: var(--font-size-editorial-mobile);
+    line-height: 1.08;
   }
 
   .intro p {

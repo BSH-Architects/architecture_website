@@ -170,9 +170,18 @@
   }
 
   .copy h2 {
-    max-width: 24ch;
-    font-size: clamp(2rem, 8.5vw, 3rem);
+    width: calc(100% + var(--page-grid-pad));
+    max-width: none;
+    font-size: var(--font-size-editorial-mobile);
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
     transform: none;
+  }
+
+  .copy h2 span {
+    display: inline;
+    white-space: normal;
   }
 
   .description {
