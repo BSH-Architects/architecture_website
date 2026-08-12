@@ -8,6 +8,7 @@ export default defineConfig([
   globalIgnores([
     '.next/**',
     'node_modules/**',
+    'workers/**/dist/**',
     'payload-types.ts',
     'src/app/(payload)/admin/importMap.ts',
   ]),

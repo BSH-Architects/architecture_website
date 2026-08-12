@@ -36,7 +36,7 @@ function publicResponse(response) {
   })
 }
 
-export default {
+const worker = {
   async fetch(request, env, context) {
     if (!['GET', 'HEAD'].includes(request.method)) {
       return new Response('Method Not Allowed', {
@@ -102,3 +102,6 @@ export default {
     }
   },
 }
+
+
+export default worker
