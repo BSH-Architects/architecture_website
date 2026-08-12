@@ -207,9 +207,9 @@ export function ProjectScrollArchive({ projects }: { projects: ArchiveProject[] 
     { length: transitions },
     () => 'var(--stage-height)',
   ).join(' + ')
-  const experienceStyle: CSSProperties = {
-    height: `calc(${scrollViewportHeight}svh${transitionHeights ? ` + ${transitionHeights}` : ''})`,
-  }
+  const experienceStyle = {
+    '--experience-height': `calc(${scrollViewportHeight}svh${transitionHeights ? ` + ${transitionHeights}` : ''})`,
+  } as CSSProperties
 
   return (
     <div className={styles.experience} ref={experienceRef} style={experienceStyle}>

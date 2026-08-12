@@ -5,10 +5,7 @@
   position: relative;
   z-index: 1;
   display: grid;
-  height: calc(
-    413svh + var(--stage-height) + var(--stage-height) + var(--stage-height) +
-      var(--stage-height)
-  );
+  height: var(--experience-height);
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: var(--grid-gap);
   align-items: stretch;
@@ -302,7 +299,7 @@
     position: static;
     display: block;
     height: auto;
-    padding-block: var(--space-16) var(--space-section-spacious);
+    padding-block: var(--space-12) var(--space-16);
     transform: none !important;
   }
 
