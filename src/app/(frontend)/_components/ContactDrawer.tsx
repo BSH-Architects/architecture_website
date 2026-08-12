@@ -253,14 +253,7 @@ export function ContactDrawerProvider({
               </p>
             </div>
 
-            <div className={styles.rule} />
-
-            <section className={styles.enquirySection} aria-labelledby={`${titleId}-form`}>
-              <div className={styles.sectionHeading}>
-                <h3 id={`${titleId}-form`}>Your project</h3>
-                <p>Share what is known. The rest can take shape together.</p>
-              </div>
-
+            <section aria-label="Project enquiry" className={styles.enquirySection}>
               <form className={styles.form} onSubmit={handleSubmit}>
                 <div className={styles.fieldPair}>
                   <label className={styles.field}>

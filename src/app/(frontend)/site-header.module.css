@@ -417,7 +417,8 @@
     transition-delay: 120ms;
   }
 
-  .navigation a {
+  .navigation a,
+  .contactAction {
     display: flex;
     min-height: var(--touch-target);
     align-items: center;
@@ -448,13 +449,19 @@
     justify-content: space-between;
     gap: var(--space-2);
     margin-inline-end: 0;
-    border-top: var(--border-width) solid var(--color-line);
     opacity: 0;
     pointer-events: none;
     transform: translateY(var(--space-3));
     transition:
       opacity 180ms ease-out,
       transform 360ms var(--ease-reveal);
+  }
+
+  .contactAction .contactIcon {
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-inline-end: var(--space-2);
+    opacity: 0.72;
   }
 
   .mobileMenuOpen .contactAction {
@@ -468,7 +475,6 @@
     inset-inline: 0;
   }
 
-  .contactAction,
   .menuToggle {
     font-size: 0.6875rem;
     letter-spacing: 0.055em;
@@ -484,11 +490,11 @@
     font-size: 1.125rem;
   }
 
-  .navigation a {
+  .navigation a,
+  .contactAction {
     font-size: 1.75rem;
   }
 
-  .contactAction,
   .menuToggle {
     font-size: 0.625rem;
     letter-spacing: 0.025em;

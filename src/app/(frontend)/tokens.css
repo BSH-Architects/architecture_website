@@ -111,7 +111,7 @@
     --grid-columns: 6;
     --grid-gap: 0.5625rem;
     --pad: 1.125rem;
-    --page-grid-pad: max(var(--pad), calc((100vw + var(--grid-gap)) / 8));
+    --page-grid-pad: max(var(--pad), calc((100vw + var(--grid-gap)) / 14));
     --site-header-height: 4rem;
   }
 }

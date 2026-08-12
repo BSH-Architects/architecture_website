@@ -170,7 +170,7 @@
   }
 
   .copy h2 {
-    width: calc(100% + var(--page-grid-pad));
+    width: 100%;
     max-width: none;
     font-size: var(--font-size-editorial-mobile);
     line-height: 1.08;

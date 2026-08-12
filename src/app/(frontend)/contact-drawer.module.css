@@ -178,12 +178,6 @@
   background: var(--color-line);
 }
 
-.sectionHeading {
-  grid-column: 1 / 5;
-  padding-inline-end: var(--space-6);
-}
-
-.sectionHeading h3,
 .contactDetails h3 {
   margin: 0;
   font-family: var(--font-family-mono);
@@ -193,17 +187,11 @@
   text-transform: uppercase;
 }
 
-.sectionHeading p {
-  max-width: 24ch;
-  margin: var(--space-5) 0 0;
-  color: var(--color-text-muted);
-  line-height: 1.45;
-}
-
 .form {
-  grid-column: 5 / -1;
+  grid-column: 1 / -1;
   display: grid;
   gap: var(--space-6);
+  margin-top: clamp(var(--space-8), 3.5vw, var(--space-12));
 }
 
 .fieldPair {
@@ -364,14 +352,6 @@
     grid-column: 9 / -1;
   }
 
-  .sectionHeading {
-    grid-column: 1 / 4;
-  }
-
-  .form {
-    grid-column: 4 / -1;
-  }
-
   .contactDetails h3 {
     grid-column: 1 / 4;
   }
@@ -407,7 +387,6 @@
 
   .introduction h2,
   .introduction > p,
-  .sectionHeading,
   .form,
   .contactDetails h3,
   .contactDetails > div,
@@ -421,26 +400,6 @@
   }
 
   .introduction > p {
-    margin-top: var(--space-10);
-  }
-
-  .sectionHeading {
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: var(--grid-gap);
-    padding-inline-end: 0;
-  }
-
-  .sectionHeading h3 {
-    grid-column: 1 / 3;
-  }
-
-  .sectionHeading p {
-    grid-column: 3 / -1;
-    margin-top: 0;
-  }
-
-  .form {
     margin-top: var(--space-10);
   }
 
