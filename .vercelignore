@@ -1,0 +1,10 @@
+.env
+.env.*
+media/
+workers/
+.restore-cache/
+public/preview/
+insp/
+.git/
+.github/
+*.tsbuildinfo
