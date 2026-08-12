@@ -46,6 +46,32 @@ npm run generate:types
 npm run generate:importmap
 ```
 
+## CMS administrator access and recovery
+
+The CMS deliberately has **no public sign-up page**. Allowing visitors to register themselves as administrators would give anyone control of the site.
+
+- On an empty database, `/admin` exposes Payload's one-time **create first user** screen. That first account becomes an administrator.
+- After the first user exists, new accounts are created by a signed-in administrator under **Users → Create New**. Administrators can assign Administrator or Editor; editors cannot create users or change roles.
+- Payload includes forgot/reset-password operations, but this project does not yet have a transactional email adapter. Do not rely on reset emails until a client-owned email provider is configured.
+
+If every administrator is locked out, recover the account from a trusted checkout connected to the intended database. The command updates the sole existing administrator's email and password; it creates an administrator only when none exists. It refuses to guess when multiple administrators exist unless `CMS_RECOVERY_ADMIN_ID` is supplied.
+
+Do not put recovery values in `.env`, commit them, paste them into chat, or run this against the wrong database. In PowerShell, collect the password without adding it to shell history:
+
+```powershell
+$env:CMS_RECOVERY_EMAIL = Read-Host 'New administrator email'
+$env:CMS_RECOVERY_NAME = Read-Host 'Administrator name'
+$securePassword = Read-Host 'New password (minimum 12 characters)' -AsSecureString
+$env:CMS_RECOVERY_PASSWORD = [System.Net.NetworkCredential]::new('', $securePassword).Password
+npm run admin:recover
+'CMS_RECOVERY_EMAIL', 'CMS_RECOVERY_NAME', 'CMS_RECOVERY_PASSWORD', 'CMS_RECOVERY_ADMIN_ID' |
+  ForEach-Object { Remove-Item "Env:$_" -ErrorAction SilentlyContinue }
+```
+
+For a database with multiple administrators, set `CMS_RECOVERY_ADMIN_ID` to the intended existing administrator before rerunning. The command never prints the password. Once access is restored, create any additional named users from the CMS instead of sharing one administrator login.
+
+The Payload dashboard is intentionally restricted to the light theme for consistent readability.
+
 ## Image delivery and asset library
 
 **Use Backblaze B2 for every CMS-managed image**: homepage hero, project covers, galleries, editorial images, and future content uploads. The browser receives those images from the Cloudflare media domain (for example, `https://media.example.com`), not from Vercel storage or a Vercel function. Authenticated uploads go browser → B2 via a short-lived signed URL, so large source files never pass through Vercel.

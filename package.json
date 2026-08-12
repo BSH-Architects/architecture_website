@@ -20,7 +20,9 @@
     "restore:content": "payload run scripts/restore-original-content.ts",
     "sync:media:b2": "payload run scripts/sync-media-to-b2.ts",
     "sync:media:b2:apply": "payload run scripts/sync-media-to-b2.ts apply",
-    "verify:homepage": "payload run scripts/verify-homepage-content.ts"
+    "verify:homepage": "payload run scripts/verify-homepage-content.ts",
+    "admin:recover": "payload run scripts/recover-admin.ts",
+    "test:admin-recovery": "node --test scripts/lib/admin-recovery.test.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.1105.0",

@@ -129,7 +129,7 @@ export default buildConfig({
     meta: {
       titleSuffix: '— Studio CMS',
     },
-    theme: 'dark',
+    theme: 'light',
   },
   collections: [Users, Media, Projects],
   db: postgresAdapter({
