@@ -17,6 +17,12 @@
   visibility: visible;
 }
 
+
+.backdrop[data-closing="true"] {
+  pointer-events: auto;
+  visibility: visible;
+}
+
 .panel {
   position: absolute;
   inset: 0 0 0 auto;
@@ -261,19 +267,12 @@
   border-bottom-color: var(--ink);
 }
 
-.previewNote,
 .formStatus {
   margin: 0;
   color: var(--color-text-muted);
   font-family: var(--font-family-mono);
   font-size: var(--font-size-datum);
   letter-spacing: 0.04em;
-}
-
-.previewNote {
-  padding: var(--space-4);
-  border: var(--border-width) solid var(--color-line);
-  text-transform: uppercase;
 }
 
 .submitButton {
@@ -338,6 +337,21 @@
 .contactDetails a {
   text-underline-offset: var(--space-2);
 }
+
+
+.contactMethods {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.contactMethods > div {
+  min-width: 0;
+}
+
+.contactMethods :is(a, span) {
+  overflow-wrap: anywhere;
+}
+
 
 .responseNote {
   grid-column: 9 / -1;

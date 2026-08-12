@@ -169,6 +169,9 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
 
           <ContactDrawerTrigger ariaLabel="Contact us" className={styles.contactAction}>
             <span>Contact us</span>
+            <svg aria-hidden="true" className={styles.contactIcon} viewBox="0 0 16 16">
+              <path d="M2.5 8h10M8.5 4l4 4-4 4" />
+            </svg>
           </ContactDrawerTrigger>
         </div>
 

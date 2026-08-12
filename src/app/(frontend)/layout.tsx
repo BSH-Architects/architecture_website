@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
+import { CONTACT_EMAIL, CONTACT_PHONE } from '@/lib/contact'
 import { SITE_NAME } from '@/lib/site'
 
 import { ContactDrawerProvider } from './_components/ContactDrawer'
@@ -21,15 +22,17 @@ export const metadata: Metadata = {
 }
 
 export default function FrontendLayout({ children }: { children: ReactNode }) {
-  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || undefined
-
   return (
     <html
       className={`${displayFont.variable} ${textFont.variable} ${monoFont.variable}`}
       lang="en"
     >
       <body suppressHydrationWarning>
-        <ContactDrawerProvider contactEmail={contactEmail} siteName={SITE_NAME}>
+        <ContactDrawerProvider
+          contactEmail={CONTACT_EMAIL}
+          contactPhone={CONTACT_PHONE}
+          siteName={SITE_NAME}
+        >
           <SmoothScroll />
           <SiteHeader siteName={SITE_NAME} />
           {children}

@@ -11,6 +11,7 @@ import path from 'node:path'
 export const SITE_NAME = 'Studio'
 
 /** Shown in the hero rail beside the practice name. */
+
 export const SITE_DATUM = 'Est. 2014 — Practice of architecture'
 
 /** Placeholder hero content, used in development only. Not client copy. */

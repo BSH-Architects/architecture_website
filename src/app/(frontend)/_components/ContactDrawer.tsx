@@ -13,6 +13,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { useLenis } from 'lenis/react'
 
 import styles from '../contact-drawer.module.css'
 
@@ -24,7 +25,8 @@ type ContactDrawerContextValue = {
 
 type ContactDrawerProviderProps = {
   children: ReactNode
-  contactEmail?: string
+  contactEmail: string
+  contactPhone: string
   siteName: string
 }
 
@@ -36,6 +38,7 @@ type ContactDrawerTriggerProps = {
 
 const ContactDrawerContext = createContext<ContactDrawerContextValue | null>(null)
 const DRAWER_ID = 'contact-drawer'
+const DRAWER_CLOSE_DURATION = 560
 const focusableSelector = [
   'a[href]',
   'button:not([disabled])',
@@ -48,38 +51,74 @@ const focusableSelector = [
 export function ContactDrawerProvider({
   children,
   contactEmail,
+  contactPhone,
   siteName,
 }: ContactDrawerProviderProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const [isClosing, setIsClosing] = useState(false)
   const [formStatus, setFormStatus] = useState('')
+  const lenis = useLenis()
   const panelRef = useRef<HTMLElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const closeTimerRef = useRef<number | null>(null)
   const openerRef = useRef<HTMLElement | null>(null)
   const titleId = useId()
   const descriptionId = useId()
 
   const open = useCallback(() => {
+    if (closeTimerRef.current !== null) {
+      window.clearTimeout(closeTimerRef.current)
+      closeTimerRef.current = null
+    }
+
     openerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
     setFormStatus('')
+    setIsClosing(false)
     setIsOpen(true)
   }, [])
 
-  const close = useCallback(() => setIsOpen(false), [])
+  const close = useCallback(() => {
+    setIsOpen(false)
+    setIsClosing(true)
+
+    if (closeTimerRef.current !== null) window.clearTimeout(closeTimerRef.current)
+    closeTimerRef.current = window.setTimeout(() => {
+      setIsClosing(false)
+      closeTimerRef.current = null
+    }, DRAWER_CLOSE_DURATION)
+  }, [])
+
+  useEffect(
+    () => () => {
+      if (closeTimerRef.current !== null) window.clearTimeout(closeTimerRef.current)
+    },
+    [],
+  )
+
+  const shouldLockScroll = isOpen || isClosing
 
   useEffect(() => {
-    if (!isOpen) return
+    if (!shouldLockScroll) return
 
     const documentElement = document.documentElement
     const body = document.body
+    const lockedScrollY = window.scrollY
     const previousHtmlOverflow = documentElement.style.overflow
     const previousBodyOverflow = body.style.overflow
     const previousBodyPaddingRight = body.style.paddingRight
+    const previousBodyPosition = body.style.position
+    const previousBodyTop = body.style.top
+    const previousBodyWidth = body.style.width
     const scrollbarWidth = Math.max(window.innerWidth - documentElement.clientWidth, 0)
     const focusFrame = window.requestAnimationFrame(() => closeButtonRef.current?.focus())
 
+    lenis?.stop()
     documentElement.dataset.contactDrawer = 'open'
     documentElement.style.overflow = 'hidden'
     body.style.overflow = 'hidden'
+    body.style.position = 'fixed'
+    body.style.top = `-${lockedScrollY}px`
+    body.style.width = '100%'
     if (scrollbarWidth > 0) body.style.paddingRight = `${scrollbarWidth}px`
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -122,9 +161,15 @@ export function ContactDrawerProvider({
       documentElement.style.overflow = previousHtmlOverflow
       body.style.overflow = previousBodyOverflow
       body.style.paddingRight = previousBodyPaddingRight
+      body.style.position = previousBodyPosition
+      body.style.top = previousBodyTop
+      body.style.width = previousBodyWidth
+      window.scrollTo(0, lockedScrollY)
+      lenis?.scrollTo(lockedScrollY, { force: true, immediate: true })
+      lenis?.start()
       window.requestAnimationFrame(() => openerRef.current?.focus())
     }
-  }, [close, isOpen])
+  }, [close, lenis, shouldLockScroll])
 
   const contextValue = useMemo(() => ({ close, isOpen, open }), [close, isOpen, open])
 
@@ -134,13 +179,6 @@ export function ContactDrawerProvider({
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-
-    if (!contactEmail) {
-      setFormStatus(
-        'The studio inbox is being confirmed. Your details have not been sent yet.',
-      )
-      return
-    }
 
     const formData = new FormData(event.currentTarget)
     const name = String(formData.get('name') || '').trim()
@@ -171,8 +209,10 @@ export function ContactDrawerProvider({
       <div
         aria-hidden={isOpen ? undefined : true}
         className={styles.backdrop}
+        data-closing={isClosing ? 'true' : undefined}
+        data-lenis-prevent
         data-open={isOpen ? 'true' : 'false'}
-        inert={isOpen ? undefined : true}
+        inert={isOpen || isClosing ? undefined : true}
         onMouseDown={handleBackdropPointerDown}
       >
         <section
@@ -295,14 +335,8 @@ export function ContactDrawerProvider({
                   />
                 </label>
 
-                {!contactEmail ? (
-                  <p className={styles.previewNote}>
-                    Preview form — connect the confirmed studio inbox before launch.
-                  </p>
-                ) : null}
-
                 <button className={styles.submitButton} type="submit">
-                  <span>{contactEmail ? 'Draft project email' : 'Preview enquiry'}</span>
+                  <span>Draft project email</span>
                   <svg aria-hidden="true" viewBox="0 0 24 24">
                     <path d="M5 12h13M13 6l6 6-6 6" />
                   </svg>
@@ -318,13 +352,15 @@ export function ContactDrawerProvider({
 
             <section className={styles.contactDetails} aria-labelledby={`${titleId}-contact`}>
               <h3 id={`${titleId}-contact`}>Direct contact</h3>
-              <div>
-                <p>Prefer to begin by email?</p>
-                {contactEmail ? (
+              <div className={styles.contactMethods}>
+                <div>
+                  <p>Email</p>
                   <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
-                ) : (
-                  <span>Email address to be confirmed</span>
-                )}
+                </div>
+                <div>
+                  <p>Phone · Placeholder</p>
+                  <span>{contactPhone}</span>
+                </div>
               </div>
               <p className={styles.responseNote}>
                 Include your location and a short description of the project. Drawings and

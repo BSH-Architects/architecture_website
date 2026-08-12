@@ -1,10 +1,12 @@
 import Link from 'next/link'
 
+import { CONTACT_EMAIL } from '@/lib/contact'
+
 import styles from '../site-footer.module.css'
 import { ContactDrawerTrigger } from './ContactDrawer'
 
 const footerLinks = [
-  { href: '/projects', label: 'Selected work' },
+  { href: '/projects', label: 'Work' },
   { href: '/#practice-study', label: 'Approach' },
   { href: '/#people-study', label: 'People' },
 ] as const
@@ -26,7 +28,10 @@ export function SiteFooter({ siteName }: { siteName: string }) {
           </ContactDrawerTrigger>
         </div>
 
-        <nav aria-label="Footer" className={styles.navigation}>
+        <nav
+          aria-label="Footer index"
+          className={`${styles.linkColumn} ${styles.navigation}`}
+        >
           <span className={styles.label}>Index</span>
           {footerLinks.map((link) => (
             <Link href={link.href} key={link.href}>
@@ -35,10 +40,11 @@ export function SiteFooter({ siteName }: { siteName: string }) {
           ))}
         </nav>
 
-        <div className={styles.practice}>
-          <span className={styles.label}>Practice</span>
-          <p>Architecture / Interiors / Landscape</p>
-          <Link href="#top">Back to top</Link>
+        <div className={`${styles.linkColumn} ${styles.socials}`}>
+          <span className={styles.label}>Socials</span>
+          <span title="Instagram profile to be confirmed">Instagram</span>
+          <span title="LinkedIn profile to be confirmed">LinkedIn</span>
+          <a href={`mailto:${CONTACT_EMAIL}`}>Email</a>
         </div>
       </div>
 
