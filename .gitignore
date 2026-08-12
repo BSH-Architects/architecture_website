@@ -12,3 +12,5 @@ public/preview/*
 .DS_Store
 
 .restore-cache/
+.vercel
+.env*
