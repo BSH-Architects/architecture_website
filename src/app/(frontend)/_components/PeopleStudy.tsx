@@ -63,6 +63,8 @@ export function PeopleStudy({
       className: styles.second,
     },
   ]
+  const peopleHeading = text(heading, peopleSectionDefaults.heading)
+  const headingLines = peopleHeading.split(/\s+(?=is\b)/i)
 
   return (
     <section aria-labelledby="people-study-title" className={styles.section} id="people-study">
@@ -74,7 +76,14 @@ export function PeopleStudy({
       </header>
 
       <div className={styles.intro}>
-        <h2 id="people-study-title">{text(heading, peopleSectionDefaults.heading)}</h2>
+        <h2 id="people-study-title">
+          {headingLines.map((line, index) => (
+            <span key={`${line}-${index}`}>
+              {line}
+              {index < headingLines.length - 1 ? ' ' : null}
+            </span>
+          ))}
+        </h2>
         <p>{text(description, peopleSectionDefaults.description)}</p>
       </div>
 

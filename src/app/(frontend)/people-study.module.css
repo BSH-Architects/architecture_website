@@ -195,17 +195,17 @@
 
 @media (max-width: 47.5rem) {
   .section {
-    padding-block: var(--space-16) var(--space-section);
+    padding-block: var(--space-12) var(--space-section);
   }
 
   .sectionHead {
-    padding-bottom: var(--space-4);
+    display: none;
   }
 
   .intro {
     grid-template-columns: repeat(6, minmax(0, 1fr));
-    row-gap: var(--space-10);
-    margin-top: var(--space-16);
+    row-gap: var(--space-6);
+    margin-top: 0;
   }
 
   .intro h2,
@@ -216,8 +216,12 @@
   .intro h2 {
     width: calc(100% + var(--page-grid-pad));
     max-width: none;
-    font-size: var(--font-size-editorial-mobile);
+    font-size: var(--font-size-editorial-mobile-emphasis);
     line-height: 1.08;
+  }
+
+  .intro h2 span {
+    display: block;
   }
 
   .intro p {
@@ -227,7 +231,7 @@
   .people {
     grid-template-columns: repeat(6, minmax(0, 1fr));
     row-gap: var(--space-20);
-    margin-top: var(--space-20);
+    margin-top: var(--space-12);
   }
 
   .first,

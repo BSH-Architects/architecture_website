@@ -25,6 +25,7 @@
   --font-size-heading-1: clamp(2.5rem, 7vw, 6.5rem);
   --font-size-heading-2: clamp(2rem, 4.5vw, 4.5rem);
   --font-size-editorial-mobile: clamp(1.25rem, 5vw, 1.5rem);
+  --font-size-editorial-mobile-emphasis: clamp(1.5rem, 6.5vw, 2rem);
 
   --line-height-display: 0.84;
   --line-height-tight: 1.02;
