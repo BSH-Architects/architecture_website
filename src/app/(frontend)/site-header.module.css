@@ -167,6 +167,10 @@
   white-space: nowrap;
 }
 
+.mobileContactAction {
+  display: none;
+}
+
 .contactIcon {
   width: 0.875rem;
   height: 0.875rem;
@@ -308,7 +312,7 @@
     height: 100%;
     min-height: 0;
     grid-template-columns: repeat(6, minmax(0, 1fr));
-    grid-template-rows: 4rem minmax(0, 1fr) 4rem;
+    grid-template-rows: 4rem minmax(0, 1fr) var(--space-4);
     row-gap: 0;
     padding-block-start: env(safe-area-inset-top, 0px);
   }
@@ -399,7 +403,7 @@
     min-height: 0;
     align-content: center;
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(3, minmax(3rem, 1fr));
+    grid-template-rows: repeat(4, minmax(3rem, 1fr));
     gap: 0;
     border-top: var(--border-width) solid var(--color-line);
     opacity: 0;
@@ -441,20 +445,22 @@
   }
 
   .contactAction {
-    grid-column: 1 / -1;
-    grid-row: 3;
+    grid-column: 1;
+    grid-row: 4;
     width: 100%;
     align-self: stretch;
     justify-self: stretch;
     justify-content: space-between;
     gap: var(--space-2);
     margin-inline-end: 0;
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(var(--space-3));
-    transition:
-      opacity 180ms ease-out,
-      transform 360ms var(--ease-reveal);
+  }
+
+  .desktopContactAction {
+    display: none;
+  }
+
+  .mobileContactAction {
+    display: flex;
   }
 
   .contactAction .contactIcon {
@@ -462,13 +468,6 @@
     height: 1.125rem;
     margin-inline-end: var(--space-2);
     opacity: 0.72;
-  }
-
-  .mobileMenuOpen .contactAction {
-    opacity: 1;
-    pointer-events: auto;
-    transform: none;
-    transition-delay: 180ms;
   }
 
   .contactAction::after {

@@ -352,13 +352,23 @@ function RouteSiteHeader({ pathname, siteName }: RouteSiteHeaderProps) {
                 <span>{item.label}</span>
               </Link>
             ))}
+
+            <ContactDrawerTrigger
+              ariaLabel="Contact us"
+              className={`${styles.contactAction} ${styles.mobileContactAction}`}
+              onBeforeOpen={mobileMenuOpen ? handleMobileContactHandoff : undefined}
+              openDelay={mobileMenuOpen ? getMobileContactHandoffDelay : 0}
+            >
+              <span>Contact us</span>
+              <svg aria-hidden="true" className={styles.contactIcon} viewBox="0 0 16 16">
+                <path d="M2.5 8h10M8.5 4l4 4-4 4" />
+              </svg>
+            </ContactDrawerTrigger>
           </nav>
 
           <ContactDrawerTrigger
             ariaLabel="Contact us"
-            className={styles.contactAction}
-            onBeforeOpen={mobileMenuOpen ? handleMobileContactHandoff : undefined}
-            openDelay={mobileMenuOpen ? getMobileContactHandoffDelay : 0}
+            className={`${styles.contactAction} ${styles.desktopContactAction}`}
           >
             <span>Contact us</span>
             <svg aria-hidden="true" className={styles.contactIcon} viewBox="0 0 16 16">
