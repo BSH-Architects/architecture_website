@@ -61,7 +61,7 @@ const worker = {
 
       const upstreamURL = new URL(`https://${endpoint}`)
       upstreamURL.pathname = `/${bucket}/${objectKey}`
-      upstreamURL.search = incomingURL.search
+      upstreamURL.search = ''
 
       const forwardedHeaders = new Headers()
       for (const name of FORWARDED_REQUEST_HEADERS) {
